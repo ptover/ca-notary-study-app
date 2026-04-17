@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#111111" />
+    <meta name="description" content="Mobile-first California notary study app built from the official 2025 handbook." />
+    <title>CA Notary Study App</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero card">
+        <div class="hero-copy">
+          <p class="eyebrow">California notary exam prep</p>
+          <h1>CA Notary Study App</h1>
+          <p class="hero-text">Built from the official California Secretary of State 2025 handbook. Use the daily study set, flip flashcards, run timed exams, and track progress from your phone.</p>
+          <div class="hero-actions">
+            <a id="official-handbook-link" class="button button-dark" target="_blank" rel="noreferrer">Open official handbook</a>
+            <button id="install-app" class="button button-light hidden" type="button">Install app</button>
+          </div>
+        </div>
+        <div class="hero-stats" id="hero-stats"></div>
+      </header>
+
+      <nav class="tab-bar card" aria-label="Study sections">
+        <button class="tab-button active" data-tab="guide" type="button">Guide</button>
+        <button class="tab-button" data-tab="flashcards" type="button">Flashcards</button>
+        <button class="tab-button" data-tab="quiz" type="button">Quiz</button>
+        <button class="tab-button" data-tab="progress" type="button">Progress</button>
+      </nav>
+
+      <main>
+        <section class="tab-panel active" id="tab-guide">
+          <div class="grid two-up">
+            <article class="card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Current official source</p>
+                  <h2>Handbook source</h2>
+                </div>
+              </div>
+              <div id="source-card" class="stack-md"></div>
+            </article>
+            <article class="card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">How to study smart</p>
+                  <h2>Exam tips</h2>
+                </div>
+              </div>
+              <ul id="exam-tips" class="bullet-list"></ul>
+            </article>
+          </div>
+
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Daily study mode</p>
+                <h2>Today’s study set</h2>
+              </div>
+              <div id="daily-study-badge-row" class="chip-row"></div>
+            </div>
+            <div id="daily-study-card" class="stack-md"></div>
+          </article>
+
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Handbook breakdown</p>
+                <h2>Topic guide</h2>
+              </div>
+              <div id="topic-filter-chips" class="chip-row"></div>
+            </div>
+            <div id="topic-guide-grid" class="topic-grid"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-flashcards" hidden>
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Memorize the rules</p>
+                <h2>Flashcards</h2>
+              </div>
+              <div class="stack-sm flashcard-controls-inline">
+                <label class="field-label" for="flashcard-category">Category</label>
+                <select id="flashcard-category"></select>
+              </div>
+            </div>
+            <div class="chip-row mode-chip-row">
+              <button id="flashcard-scope-all" class="chip active" type="button">All flashcards</button>
+              <button id="flashcard-scope-daily" class="chip" type="button">Today’s flashcards</button>
+            </div>
+            <div class="flashcard-meta" id="flashcard-meta"></div>
+            <button id="flashcard-card" class="flashcard" type="button" aria-live="polite"></button>
+            <div class="button-row">
+              <button id="flashcard-prev" class="button button-light" type="button">Previous</button>
+              <button id="flashcard-flip" class="button button-dark" type="button">Flip card</button>
+              <button id="flashcard-next" class="button button-light" type="button">Next</button>
+            </div>
+            <div class="button-row compact">
+              <button id="flashcard-mastered" class="button button-success" type="button">Mark mastered</button>
+              <button id="flashcard-reset" class="button button-light" type="button">Reset mastered cards</button>
+            </div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-quiz" hidden>
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Practice questions</p>
+                <h2>Quiz + timed exam</h2>
+              </div>
+            </div>
+
+            <div class="quiz-toolbar grid-form">
+              <div class="field-group">
+                <label class="field-label" for="quiz-mode">Mode</label>
+                <select id="quiz-mode">
+                  <option value="practice">Practice mode</option>
+                  <option value="timed">Timed exam</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="quiz-category">Question set</label>
+                <select id="quiz-category"></select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="quiz-question-count">Question count</label>
+                <select id="quiz-question-count">
+                  <option value="8">8 questions</option>
+                  <option value="10">10 questions</option>
+                  <option value="15">15 questions</option>
+                  <option value="20">20 questions</option>
+                  <option value="all">All available</option>
+                </select>
+              </div>
+              <div class="field-group" id="quiz-duration-group">
+                <label class="field-label" for="quiz-duration">Timed exam length</label>
+                <select id="quiz-duration">
+                  <option value="300">5 minutes</option>
+                  <option value="600">10 minutes</option>
+                  <option value="900">15 minutes</option>
+                  <option value="1200">20 minutes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="chip-row mode-chip-row">
+              <button id="quiz-scope-category" class="chip active" type="button">Selected set</button>
+              <button id="quiz-scope-daily" class="chip" type="button">Today’s mini quiz</button>
+            </div>
+
+            <div class="button-row compact mobile-wrap">
+              <button id="quiz-start" class="button button-dark" type="button">Start session</button>
+              <button id="quiz-restart" class="button button-light" type="button">Restart</button>
+            </div>
+
+            <div id="quiz-empty" class="empty-state">
+              Choose practice mode or timed exam, then tap Start session.
+            </div>
+
+            <div id="quiz-stage" class="hidden">
+              <div id="quiz-progress" class="flashcard-meta"></div>
+              <div class="quiz-question-card">
+                <h3 id="quiz-prompt"></h3>
+                <div id="quiz-options" class="option-list"></div>
+                <div id="quiz-explanation" class="explanation hidden"></div>
+              </div>
+              <div class="button-row">
+                <button id="quiz-submit" class="button button-dark" type="button">Submit answer</button>
+                <button id="quiz-next" class="button button-light hidden" type="button">Next question</button>
+              </div>
+            </div>
+
+            <div id="quiz-results" class="hidden"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-progress" hidden>
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Your progress</p>
+                <h2>Scoreboard</h2>
+              </div>
+            </div>
+            <div id="progress-stats" class="metric-grid"></div>
+            <div class="grid two-up progress-detail-grid">
+              <div class="subcard">
+                <h3>Flashcard completion</h3>
+                <div id="flashcard-progress-list" class="stack-sm"></div>
+              </div>
+              <div class="subcard">
+                <h3>Recent quiz focus areas</h3>
+                <div id="quiz-focus-list" class="stack-sm"></div>
+              </div>
+            </div>
+            <div class="grid two-up progress-detail-grid">
+              <div class="subcard">
+                <h3>Daily study status</h3>
+                <div id="daily-progress-list" class="stack-sm"></div>
+              </div>
+              <div class="subcard">
+                <h3>Timed exam history</h3>
+                <div id="timed-exam-history" class="stack-sm"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <footer class="footer-note">
+        Built for mobile study review. For final legal accuracy, always double-check the official handbook PDF before test day.
+      </footer>
+    </div>
+
+    <script type="module" src="./src/app.mjs"></script>
+  </body>
+</html>

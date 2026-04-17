@@ -1,0 +1,17 @@
+{
+  "name": "CA Notary Study App",
+  "short_name": "CA Notary",
+  "description": "Mobile-first California notary study guide based on the official 2025 handbook.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f4f3",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

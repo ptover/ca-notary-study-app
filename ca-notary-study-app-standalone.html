@@ -1,0 +1,2302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#111111" />
+    <meta name="description" content="Mobile-first California notary study app built from the official 2025 handbook." />
+    <title>CA Notary Study App</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+:root {
+  color-scheme: light;
+  --bg: #f4f4f3;
+  --surface: #ffffff;
+  --surface-alt: #f8f8f7;
+  --text: #111111;
+  --muted: #666666;
+  --line: rgba(17, 17, 17, 0.08);
+  --shadow: 0 1px 5px -4px rgba(19, 19, 22, 0.7), 0 0 0 1px rgba(34, 42, 53, 0.08), 0 10px 24px rgba(34, 42, 53, 0.05);
+  --radius: 24px;
+  --radius-sm: 16px;
+  --success: #1f7a41;
+  --success-soft: #e8f5eb;
+  --danger: #9b1c1c;
+  --danger-soft: #fdecec;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  font-size: 16.5px;
+  line-height: 1.5;
+}
+
+button,
+select,
+a {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+select {
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  background: var(--surface);
+  color: var(--text);
+}
+
+select:disabled,
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+main {
+  display: grid;
+  gap: 1rem;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.app-shell {
+  width: min(1100px, calc(100vw - 1.25rem));
+  margin: 0 auto;
+  padding: max(1rem, env(safe-area-inset-top)) 0 max(1.5rem, env(safe-area-inset-bottom));
+}
+
+.card,
+.topic-card,
+.subcard,
+.metric-card,
+.flashcard,
+.quiz-question-card,
+.results-panel,
+.review-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card,
+.section-card {
+  padding: 1.1rem;
+}
+
+.hero {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.hero-text,
+.muted,
+.topic-quicktake,
+.footer-note,
+.explanation,
+.review-card p,
+.empty-state,
+.plain-list {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.hero-actions,
+.button-row,
+.flashcard-meta,
+.quiz-toolbar,
+.topic-card-head,
+.result-row,
+.section-heading,
+.hero-stats,
+.chip-row,
+.metric-grid {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stat-pill,
+.metric-card,
+.subcard,
+.topic-card,
+.review-card {
+  padding: 1rem;
+}
+
+.stat-pill {
+  border-radius: 20px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+}
+
+.stat-value,
+.metric-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.stat-label,
+.metric-label,
+.face-label,
+.source-ref,
+.field-label,
+.eyebrow,
+.tap-hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.9rem 1.1rem;
+  border-radius: 16px;
+  text-decoration: none;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button-dark {
+  background: var(--text);
+  color: white;
+}
+
+.button-light {
+  background: var(--surface-alt);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.button-success {
+  background: var(--success);
+  color: white;
+}
+
+.tab-bar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0.45rem;
+  gap: 0.45rem;
+}
+
+.tab-button {
+  min-height: 48px;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.tab-button.active {
+  background: var(--text);
+  color: white;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.grid-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.topic-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.stack-sm,
+.stack-md {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.stack-md {
+  gap: 1rem;
+}
+
+.section-heading {
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.chip,
+.mini-chip,
+.timer-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.chip,
+.timer-chip {
+  min-height: 40px;
+  padding: 0.55rem 0.9rem;
+}
+
+.mini-chip {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.82rem;
+}
+
+.timer-chip {
+  font-weight: 700;
+}
+
+.chip.active {
+  background: var(--text);
+  color: white;
+}
+
+.chip.static {
+  cursor: default;
+}
+
+.mode-chip-row {
+  margin-bottom: 1rem;
+}
+
+.bullet-list {
+  display: grid;
+  gap: 0.65rem;
+  color: var(--muted);
+}
+
+.bullet-list.compact {
+  gap: 0.55rem;
+}
+
+.plain-list {
+  padding-left: 0;
+}
+
+.source-panel {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.source-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.text-link {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.topic-card {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.topic-card h3,
+.quiz-question-card h3,
+.subcard h3,
+.results-block h3 {
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.flashcard {
+  width: 100%;
+  padding: 1.35rem;
+  min-height: 260px;
+  text-align: left;
+  display: flex;
+  align-items: stretch;
+  margin-top: 1rem;
+}
+
+.flashcard-face {
+  display: grid;
+  align-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.flashcard-face p {
+  font-size: clamp(1.2rem, 4vw, 1.55rem);
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.flashcard-face.back p {
+  font-weight: 600;
+}
+
+.tap-hint {
+  justify-self: start;
+}
+
+.compact {
+  gap: 0.55rem;
+}
+
+.quiz-toolbar {
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.field-group {
+  display: grid;
+  gap: 0.45rem;
+  min-width: min(100%, 220px);
+}
+
+.empty-state {
+  border: 1px dashed rgba(17, 17, 17, 0.15);
+  border-radius: 18px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.quiz-question-card,
+.results-panel {
+  padding: 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.option-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.option-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--surface-alt);
+}
+
+.option-card.selected {
+  border-color: rgba(17, 17, 17, 0.25);
+}
+
+.option-card.correct {
+  background: var(--success-soft);
+  border-color: rgba(31, 122, 65, 0.25);
+}
+
+.option-card.incorrect {
+  background: var(--danger-soft);
+  border-color: rgba(155, 28, 28, 0.2);
+}
+
+.option-card input {
+  margin-top: 0.15rem;
+}
+
+.explanation {
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.quiz-feedback-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.quiz-feedback-status.correct {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.quiz-feedback-status.incorrect {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metric-grid.compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.progress-detail-grid {
+  margin-top: 1rem;
+}
+
+.subcard {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.result-row {
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 0.95rem;
+  border-radius: 16px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+}
+
+.review-card {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.results-block {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.footer-note {
+  text-align: center;
+  padding: 0.5rem 0 0.75rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (min-width: 760px) {
+  .hero {
+    grid-template-columns: 1.35fr 1fr;
+    align-items: stretch;
+  }
+
+  .two-up {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid-form {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 759px) {
+  .tab-bar {
+    position: sticky;
+    top: max(0.5rem, env(safe-area-inset-top));
+    z-index: 10;
+  }
+
+  .tab-bar,
+  .hero,
+  .card,
+  .topic-card,
+  .flashcard,
+  .quiz-question-card,
+  .results-panel,
+  .subcard {
+    border-radius: 22px;
+  }
+
+  .tab-button {
+    font-size: 0.92rem;
+  }
+
+  .hero-actions .button,
+  .button-row .button,
+  .mobile-wrap .button {
+    flex: 1 1 100%;
+  }
+
+  .button-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+  }
+
+  .hero-stats,
+  .metric-grid,
+  .metric-grid.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-group {
+    min-width: 100%;
+  }
+}
+
+</style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero card">
+        <div class="hero-copy">
+          <p class="eyebrow">California notary exam prep</p>
+          <h1>CA Notary Study App</h1>
+          <p class="hero-text">Built from the official California Secretary of State 2025 handbook. Use the daily study set, flip flashcards, run timed exams, and track progress from your phone.</p>
+          <div class="hero-actions">
+            <a id="official-handbook-link" class="button button-dark" target="_blank" rel="noreferrer">Open official handbook</a>
+            <button id="install-app" class="button button-light hidden" type="button">Install app</button>
+          </div>
+        </div>
+        <div class="hero-stats" id="hero-stats"></div>
+      </header>
+
+      <nav class="tab-bar card" aria-label="Study sections">
+        <button class="tab-button active" data-tab="guide" type="button">Guide</button>
+        <button class="tab-button" data-tab="flashcards" type="button">Flashcards</button>
+        <button class="tab-button" data-tab="quiz" type="button">Quiz</button>
+        <button class="tab-button" data-tab="progress" type="button">Progress</button>
+      </nav>
+
+      <main>
+        <section class="tab-panel active" id="tab-guide">
+          <div class="grid two-up">
+            <article class="card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Current official source</p>
+                  <h2>Handbook source</h2>
+                </div>
+              </div>
+              <div id="source-card" class="stack-md"></div>
+            </article>
+            <article class="card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">How to study smart</p>
+                  <h2>Exam tips</h2>
+                </div>
+              </div>
+              <ul id="exam-tips" class="bullet-list"></ul>
+            </article>
+          </div>
+
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Daily study mode</p>
+                <h2>Today’s study set</h2>
+              </div>
+              <div id="daily-study-badge-row" class="chip-row"></div>
+            </div>
+            <div id="daily-study-card" class="stack-md"></div>
+          </article>
+
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Handbook breakdown</p>
+                <h2>Topic guide</h2>
+              </div>
+              <div id="topic-filter-chips" class="chip-row"></div>
+            </div>
+            <div id="topic-guide-grid" class="topic-grid"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-flashcards" hidden>
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Memorize the rules</p>
+                <h2>Flashcards</h2>
+              </div>
+              <div class="stack-sm flashcard-controls-inline">
+                <label class="field-label" for="flashcard-category">Category</label>
+                <select id="flashcard-category"></select>
+              </div>
+            </div>
+            <div class="chip-row mode-chip-row">
+              <button id="flashcard-scope-all" class="chip active" type="button">All flashcards</button>
+              <button id="flashcard-scope-daily" class="chip" type="button">Today’s flashcards</button>
+            </div>
+            <div class="flashcard-meta" id="flashcard-meta"></div>
+            <button id="flashcard-card" class="flashcard" type="button" aria-live="polite"></button>
+            <div class="button-row">
+              <button id="flashcard-prev" class="button button-light" type="button">Previous</button>
+              <button id="flashcard-flip" class="button button-dark" type="button">Flip card</button>
+              <button id="flashcard-next" class="button button-light" type="button">Next</button>
+            </div>
+            <div class="button-row compact">
+              <button id="flashcard-mastered" class="button button-success" type="button">Mark mastered</button>
+              <button id="flashcard-reset" class="button button-light" type="button">Reset mastered cards</button>
+            </div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-quiz" hidden>
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Practice questions</p>
+                <h2>Quiz + timed exam</h2>
+              </div>
+            </div>
+
+            <div class="quiz-toolbar grid-form">
+              <div class="field-group">
+                <label class="field-label" for="quiz-mode">Mode</label>
+                <select id="quiz-mode">
+                  <option value="practice">Practice mode</option>
+                  <option value="timed">Timed exam</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="quiz-category">Question set</label>
+                <select id="quiz-category"></select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="quiz-question-count">Question count</label>
+                <select id="quiz-question-count">
+                  <option value="8">8 questions</option>
+                  <option value="10">10 questions</option>
+                  <option value="15">15 questions</option>
+                  <option value="20">20 questions</option>
+                  <option value="all">All available</option>
+                </select>
+              </div>
+              <div class="field-group" id="quiz-duration-group">
+                <label class="field-label" for="quiz-duration">Timed exam length</label>
+                <select id="quiz-duration">
+                  <option value="300">5 minutes</option>
+                  <option value="600">10 minutes</option>
+                  <option value="900">15 minutes</option>
+                  <option value="1200">20 minutes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="chip-row mode-chip-row">
+              <button id="quiz-scope-category" class="chip active" type="button">Selected set</button>
+              <button id="quiz-scope-daily" class="chip" type="button">Today’s mini quiz</button>
+            </div>
+
+            <div class="button-row compact mobile-wrap">
+              <button id="quiz-start" class="button button-dark" type="button">Start session</button>
+              <button id="quiz-restart" class="button button-light" type="button">Restart</button>
+            </div>
+
+            <div id="quiz-empty" class="empty-state">
+              Choose practice mode or timed exam, then tap Start session.
+            </div>
+
+            <div id="quiz-stage" class="hidden">
+              <div id="quiz-progress" class="flashcard-meta"></div>
+              <div class="quiz-question-card">
+                <h3 id="quiz-prompt"></h3>
+                <div id="quiz-options" class="option-list"></div>
+                <div id="quiz-explanation" class="explanation hidden"></div>
+              </div>
+              <div class="button-row">
+                <button id="quiz-submit" class="button button-dark" type="button">Submit answer</button>
+                <button id="quiz-next" class="button button-light hidden" type="button">Next question</button>
+              </div>
+            </div>
+
+            <div id="quiz-results" class="hidden"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-progress" hidden>
+          <article class="card section-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Your progress</p>
+                <h2>Scoreboard</h2>
+              </div>
+            </div>
+            <div id="progress-stats" class="metric-grid"></div>
+            <div class="grid two-up progress-detail-grid">
+              <div class="subcard">
+                <h3>Flashcard completion</h3>
+                <div id="flashcard-progress-list" class="stack-sm"></div>
+              </div>
+              <div class="subcard">
+                <h3>Recent quiz focus areas</h3>
+                <div id="quiz-focus-list" class="stack-sm"></div>
+              </div>
+            </div>
+            <div class="grid two-up progress-detail-grid">
+              <div class="subcard">
+                <h3>Daily study status</h3>
+                <div id="daily-progress-list" class="stack-sm"></div>
+              </div>
+              <div class="subcard">
+                <h3>Timed exam history</h3>
+                <div id="timed-exam-history" class="stack-sm"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <footer class="footer-note">
+        Built for mobile study review. For final legal accuracy, always double-check the official handbook PDF before test day.
+      </footer>
+    </div>
+
+    <script type="module">
+export const handbookSource = {
+  title: '2025 California Notary Public Handbook',
+  currentStatus: 'Current official handbook listed by the California Secretary of State on April 17, 2026',
+  officialPageUrl: 'https://www.sos.ca.gov/notary/handbook',
+  pdfUrl: 'https://notary.cdn.sos.ca.gov/forms/notary-handbook-current.pdf',
+  workbookUrl: 'https://notary.cdn.sos.ca.gov/forms/notary-education-sample-workbook-2017.pdf',
+  edition: '2025',
+  pages: 59,
+  note: 'The Secretary of State handbook page lists the 2025 PDF as the current handbook. No 2026 handbook was listed on the official page during this build.',
+};
+
+export const examTips = [
+  'Memorize the high-frequency numbers: 18 years old, 30 calendar days to file oath and bond, $15,000 bond, $15 max fee for most core notarial acts.',
+  'Separate acknowledgments from jurats: acknowledgment = signer acknowledges execution; jurat = signer appears, signs in front of notary, and takes oath/affirmation.',
+  'Journal questions matter a lot. Know what goes in every entry and when a thumbprint is required.',
+  'Know the three identity paths: ID documents, one personally known credible witness, or two credible witnesses not personally known to the notary.',
+  'Watch for prohibited conduct: incomplete documents, legal advice, misuse of “notario,” and seal/journal control violations.',
+  'If a document affects real property or is a power of attorney, think thumbprint and stricter handling.',
+];
+
+export const topicSummaries = [
+  {
+    id: 'commission-basics',
+    category: 'Commission Basics',
+    title: 'Appointment, qualification, and bond',
+    quickTake: 'To become a California notary, you must meet the base qualifications, pass the exam/background check, and file your oath and $15,000 bond on time.',
+    bullets: [
+      'Requirements: California legal resident, at least 18, approved course, written exam, background check.',
+      'Initial applicants complete a six-hour course. Renewing notaries may use a three-hour refresher only if their current commission has not expired.',
+      'After a commission is issued, the notary has 30 calendar days from the start of the term to file the oath and $15,000 surety bond with the county clerk.',
+      'The commission does not take effect until the oath and bond are filed.',
+      'California notaries may perform services anywhere in California, not just the county where the oath and bond were filed.',
+    ],
+    sourceRef: 'Handbook pages 7-8',
+  },
+  {
+    id: 'seal-rules',
+    category: 'Seal & Scope',
+    title: 'Seal control and practice-of-law limits',
+    quickTake: 'Your seal must stay under your direct and exclusive control, and you cannot act like an attorney or give legal advice.',
+    bullets: [
+      'The seal must be kept in a locked and secured area under the notary’s direct and exclusive control.',
+      'A notary may not surrender the seal to an employer or any other person.',
+      'Seal contents include the State Seal, “Notary Public,” your commissioned name, county of filing, commission expiration date, commission number, and vendor/manufacturer number.',
+      'A California notary cannot prepare legal documents, choose the type of legal form for someone, or give legal advice.',
+      'When the commission is no longer valid, the seal must be destroyed.',
+    ],
+    sourceRef: 'Handbook pages 8-9',
+  },
+  {
+    id: 'identification',
+    category: 'Identification',
+    title: 'Satisfactory evidence and credible witnesses',
+    quickTake: 'Identity is established through satisfactory evidence: approved IDs, one personally known credible witness, or two credible witnesses.',
+    bullets: [
+      'Current or issued within 5 years: California driver license/ID, U.S. passport, certain inmate IDs.',
+      'Other approved IDs must include photo, description, signature, and identifying number; examples include foreign passport, consular ID, out-of-state driver license/ID, some military IDs, qualifying employee IDs, and tribal IDs.',
+      'One credible witness can be used only if the notary personally knows that witness.',
+      'Two credible witnesses may be used when the notary does not personally know them, but the notary must identify them with approved ID documents.',
+      'Credible witnesses must swear the signer is the person named, personally know the signer, believe it would be difficult or impossible for the signer to obtain ID, and have no financial interest in the document.',
+    ],
+    sourceRef: 'Handbook pages 9-11',
+  },
+  {
+    id: 'journal',
+    category: 'Journal',
+    title: 'Journal entries and thumbprints',
+    quickTake: 'A California notary keeps one active sequential journal and must capture detailed entries for every official act.',
+    bullets: [
+      'The journal must be stored in a locked and secured area under the notary’s direct and exclusive control.',
+      'Each entry includes date, time, type of act, character of instrument, signer signature, identity method, and fee charged.',
+      'If ID was used, the journal records the type of ID, issuing agency, serial/ID number, and date of issue or expiration.',
+      'Thumbprints are required for deeds, quitclaim deeds, deeds of trust, other documents affecting real property, and powers of attorney.',
+      'If a journal is lost, stolen, destroyed, damaged, or unusable, the notary must immediately notify the Secretary of State by a trackable physical delivery method.',
+    ],
+    sourceRef: 'Handbook page 11',
+  },
+  {
+    id: 'acknowledgment',
+    category: 'Core Acts',
+    title: 'Acknowledgments',
+    quickTake: 'An acknowledgment certifies personal appearance, identity, and the signer’s acknowledgment that they executed the document.',
+    bullets: [
+      'The signer must personally appear before the notary.',
+      'The notary certifies identity and that the signer acknowledged executing the document.',
+      'The acknowledgment certificate must be complete when the notary signs and seals it.',
+      'A false acknowledgment can trigger civil penalties and criminal consequences.',
+      'An acknowledgment cannot be completed for a document mailed in without the signer personally appearing.',
+    ],
+    sourceRef: 'Handbook pages 12-13',
+  },
+  {
+    id: 'jurat',
+    category: 'Core Acts',
+    title: 'Jurats',
+    quickTake: 'A jurat requires personal appearance, the signer signing in the notary’s presence, and an oath or affirmation.',
+    bullets: [
+      'The signer must personally appear before the notary.',
+      'The signer must sign the document in the notary’s presence.',
+      'The notary must administer an oath or affirmation.',
+      'A jurat cannot be completed if the signer does not appear and sign before the notary.',
+      'The jurat verifies identity, not the truthfulness or validity of the document itself.',
+    ],
+    sourceRef: 'Handbook pages 13-14',
+  },
+  {
+    id: 'subscribing-witness',
+    category: 'Special Situations',
+    title: 'Proof of execution by subscribing witness',
+    quickTake: 'This is a narrow procedure and cannot be used for powers of attorney or most real-property related documents.',
+    bullets: [
+      'The principal does not appear; instead, a subscribing witness appears to prove execution.',
+      'The subscribing witness must swear they know the principal, saw the principal sign or heard the principal acknowledge the signature, and were asked to sign as a witness.',
+      'The notary identifies the subscribing witness through the oath of a credible witness personally known to the notary and who personally knows the subscribing witness.',
+      'It cannot be used with powers of attorney, quitclaim deeds, most grant deeds, mortgages, deeds of trust, security agreements, instruments affecting real property, or documents requiring a thumbprint in the journal.',
+      'The subscribing witness signs the journal, and the credible witness signs the journal or has identifying document details recorded.',
+    ],
+    sourceRef: 'Handbook pages 14-16',
+  },
+  {
+    id: 'signature-by-mark',
+    category: 'Special Situations',
+    title: 'Signature by mark and power-of-attorney copies',
+    quickTake: 'A signer who cannot write may sign by mark, and California notaries may certify copies of powers of attorney.',
+    bullets: [
+      'A signer by mark still must be identified by satisfactory evidence.',
+      'Two witnesses must observe the signature by mark and sign the document as witnesses.',
+      'The signer’s mark must also appear in the notary journal and be witnessed there as well.',
+      'The notary generally does not need to identify the mark witnesses unless they are also serving as credible witnesses.',
+      'A notary may certify a copy of a power of attorney after comparing the copy with the original.',
+    ],
+    sourceRef: 'Handbook pages 16-18',
+  },
+  {
+    id: 'tangible-copy',
+    category: 'Special Situations',
+    title: 'Tangible copy certification and incomplete documents',
+    quickTake: 'Newer 2025 material includes tangible copy certification of electronic records. Incomplete documents must always be refused.',
+    bullets: [
+      'A disinterested custodian may certify that a tangible copy is a complete and accurate reproduction of an electronic record.',
+      'The certification is subscribed and sworn to, or affirmed, before the notary and must be accompanied by a jurat.',
+      'The custodian states the reproduction is accurate, tamper-evident security procedures were intact, there were no changes/errors after creation/execution/notarization, and the custodian does not directly benefit from the record.',
+      'A notary may not notarize an incomplete document if it is incomplete on its face or known to be incomplete from the notary’s experience.',
+      'There is no legal fix-up shortcut for a completed notarial act; if there is an error, the signature must be notarized again with a new certificate and new journal entry.',
+    ],
+    sourceRef: 'Handbook pages 18-19',
+  },
+  {
+    id: 'prohibited-conduct',
+    category: 'Prohibited Conduct',
+    title: 'Advertising, immigration, and discipline triggers',
+    quickTake: 'Non-attorney notaries face strict advertising rules, may not act as immigration consultants unless separately qualified, and can lose commissions for violations.',
+    bullets: [
+      'A non-attorney advertising notarial services in another language must post the required notice that they are not an attorney and cannot give legal advice.',
+      'A notary may not translate “Notary Public” into Spanish as “notario publico” or “notario.”',
+      'A notary cannot advertise as a notary public at all if they promote themselves as an immigration specialist or consultant.',
+      'Only attorneys, DOJ-accredited representatives, or properly registered and bonded immigration consultants may assist clients in completing immigration forms.',
+      'Common discipline triggers include charging too much, false certificates, failing to secure the journal or seal, and failing to complete required wording at the time of notarization.',
+    ],
+    sourceRef: 'Handbook pages 20-21',
+  },
+  {
+    id: 'fees-admin',
+    category: 'Fees & Administration',
+    title: 'Maximum fees and address changes',
+    quickTake: 'Most tested fee questions come from the statutory fee table and address-change deadlines.',
+    bullets: [
+      'Acknowledgment: $15 for each signature.',
+      'Oath or affirmation: $15 to one person.',
+      'Jurat: $15.',
+      'Deposition services: $30 for all services in connection with taking a deposition, plus $7 oath to witness and $7 certificate to deposition.',
+      'Vote-by-mail identification envelopes and other voting materials: $0. Address changes must be reported to the Secretary of State within 30 days.',
+    ],
+    sourceRef: 'Handbook pages 22-23',
+  },
+];
+
+export const flashcards = [
+  { id: 'f1', category: 'Commission Basics', front: 'What are the five core requirements to become a California notary?', back: 'Be a California legal resident, be at least 18, complete an approved course, pass the written exam, and pass the background check.' },
+  { id: 'f2', category: 'Commission Basics', front: 'How long does a newly commissioned notary have to file the oath and bond?', back: '30 calendar days from the beginning of the commission term.' },
+  { id: 'f3', category: 'Commission Basics', front: 'What is the required California notary surety bond amount?', back: '$15,000.' },
+  { id: 'f4', category: 'Seal & Scope', front: 'Can a notary surrender the official seal to an employer who paid for it?', back: 'No. The seal must remain under the notary’s direct and exclusive control.' },
+  { id: 'f5', category: 'Seal & Scope', front: 'Can a California notary give legal advice or choose legal forms for someone?', back: 'No. That may constitute the unauthorized practice of law.' },
+  { id: 'f6', category: 'Identification', front: 'What does “satisfactory evidence” mean in California notary law?', back: 'No reasonable basis to doubt identity plus approved identification documents, one personally known credible witness, or two credible witnesses.' },
+  { id: 'f7', category: 'Identification', front: 'Which witness setup requires the witness to be personally known to the notary?', back: 'A single credible witness.' },
+  { id: 'f8', category: 'Identification', front: 'When the notary does not personally know the credible witnesses, how many are required?', back: 'Two credible witnesses.' },
+  { id: 'f9', category: 'Journal', front: 'How many active sequential journals may a California notary keep at one time?', back: 'One active sequential journal at a time.' },
+  { id: 'f10', category: 'Journal', front: 'Name two document types that require a thumbprint in the journal.', back: 'Powers of attorney and documents affecting real property, such as deeds or deeds of trust.' },
+  { id: 'f11', category: 'Core Acts', front: 'What does an acknowledgment certify?', back: 'That the signer personally appeared, was identified, and acknowledged executing the document.' },
+  { id: 'f12', category: 'Core Acts', front: 'What extra step makes a jurat different from an acknowledgment?', back: 'The signer must sign in the notary’s presence and take an oath or affirmation.' },
+  { id: 'f13', category: 'Special Situations', front: 'Can proof of execution by a subscribing witness be used with a power of attorney?', back: 'No. It cannot be used with powers of attorney or most real-property-related documents.' },
+  { id: 'f14', category: 'Special Situations', front: 'How is the identity of a subscribing witness established?', back: 'By the oath of a credible witness personally known to the notary and who personally knows the subscribing witness, plus the credible witness must show qualifying ID.' },
+  { id: 'f15', category: 'Special Situations', front: 'How many witnesses are needed for a signature by mark?', back: 'Two witnesses on the document, and the mark in the journal must also be witnessed.' },
+  { id: 'f16', category: 'Special Situations', front: 'What copy is a California notary specifically authorized to certify?', back: 'A copy of a power of attorney.' },
+  { id: 'f17', category: 'Special Situations', front: 'Who signs the tangible copy certification for an electronic record?', back: 'A disinterested custodian, under oath or affirmation, with a jurat completed by the notary.' },
+  { id: 'f18', category: 'Special Situations', front: 'Can a notary notarize an incomplete document?', back: 'No. The notary must refuse if the document is incomplete on its face or known to be incomplete.' },
+  { id: 'f19', category: 'Prohibited Conduct', front: 'Can a non-attorney California notary advertise as “notario publico” in Spanish?', back: 'No. That translation is prohibited.' },
+  { id: 'f20', category: 'Prohibited Conduct', front: 'May a notary assist someone in completing immigration forms just because they are a notary?', back: 'No. Only attorneys, DOJ-accredited representatives, or properly registered and bonded immigration consultants may do that.' },
+  { id: 'f21', category: 'Fees & Administration', front: 'What is the maximum fee for an acknowledgment in California?', back: '$15 for each signature.' },
+  { id: 'f22', category: 'Fees & Administration', front: 'What is the maximum fee for a jurat in California?', back: '$15.' },
+  { id: 'f23', category: 'Fees & Administration', front: 'What is the fee to notarize vote-by-mail ballot identification envelopes or other voting materials?', back: '$0.' },
+  { id: 'f24', category: 'Fees & Administration', front: 'How long does a notary have to notify the Secretary of State of an address change?', back: 'Within 30 days.' },
+];
+
+export const quizQuestions = [
+  {
+    id: 'q1',
+    category: 'Commission Basics',
+    prompt: 'How long does a newly commissioned California notary have to file the oath of office and bond?',
+    options: ['15 calendar days', '30 calendar days', '45 calendar days', '60 calendar days'],
+    correctAnswer: 1,
+    explanation: 'The handbook states the oath and $15,000 bond must be filed within 30 calendar days from the beginning of the commission term.',
+  },
+  {
+    id: 'q2',
+    category: 'Commission Basics',
+    prompt: 'What is the required official bond amount for a California notary public?',
+    options: ['$5,000', '$10,000', '$15,000', '$25,000'],
+    correctAnswer: 2,
+    explanation: 'California law requires every notary public to file an official bond in the amount of $15,000.',
+  },
+  {
+    id: 'q3',
+    category: 'Seal & Scope',
+    prompt: 'Which statement is true about a notary public seal?',
+    options: ['It may be left with an employer for safekeeping', 'It must remain under the direct and exclusive control of the notary', 'It may be loaned to another commissioned notary', 'It may be used for general business branding'],
+    correctAnswer: 1,
+    explanation: 'The handbook says the seal must be kept in a locked and secured area under the direct and exclusive control of the notary.',
+  },
+  {
+    id: 'q4',
+    category: 'Identification',
+    prompt: 'If a notary uses one credible witness to identify a signer, what must be true?',
+    options: ['The notary must personally know the signer', 'The notary must personally know the credible witness', 'The witness must be an attorney', 'No oath is required'],
+    correctAnswer: 1,
+    explanation: 'A single credible witness may be used only when that witness is personally known to the notary.',
+  },
+  {
+    id: 'q5',
+    category: 'Identification',
+    prompt: 'When the notary does not personally know the credible witnesses, how many credible witnesses are required?',
+    options: ['One', 'Two', 'Three', 'None'],
+    correctAnswer: 1,
+    explanation: 'Two credible witnesses are required when the notary does not personally know them.',
+  },
+  {
+    id: 'q6',
+    category: 'Journal',
+    prompt: 'How many active sequential journals may a California notary keep at one time?',
+    options: ['One', 'Two', 'Three', 'As many as needed'],
+    correctAnswer: 0,
+    explanation: 'The handbook requires one active sequential journal at a time.',
+  },
+  {
+    id: 'q7',
+    category: 'Journal',
+    prompt: 'A thumbprint is required in the journal for which document?',
+    options: ['A simple school permission slip', 'A power of attorney', 'A restaurant receipt', 'A personal letter'],
+    correctAnswer: 1,
+    explanation: 'The handbook specifically requires thumbprints for powers of attorney and specified real-property-related documents.',
+  },
+  {
+    id: 'q8',
+    category: 'Core Acts',
+    prompt: 'Which notarial act requires the signer to sign in the notary’s presence and take an oath or affirmation?',
+    options: ['Acknowledgment', 'Copy certification of power of attorney', 'Jurat', 'Proof of execution by subscribing witness'],
+    correctAnswer: 2,
+    explanation: 'That is the defining rule for a jurat.',
+  },
+  {
+    id: 'q9',
+    category: 'Core Acts',
+    prompt: 'Which statement best describes an acknowledgment?',
+    options: ['The notary certifies the document is truthful', 'The signer personally appears, is identified, and acknowledges executing the document', 'The signer must sign in front of the notary and swear the contents are true', 'The document may be mailed in if the notary knows the signer'],
+    correctAnswer: 1,
+    explanation: 'An acknowledgment covers personal appearance, identity, and acknowledgment of execution—not truthfulness of the document.',
+  },
+  {
+    id: 'q10',
+    category: 'Special Situations',
+    prompt: 'Proof of execution by a subscribing witness cannot be used with which document?',
+    options: ['Power of attorney', 'Routine affidavit', 'School form', 'Vehicle release form'],
+    correctAnswer: 0,
+    explanation: 'The handbook expressly says proof of execution by subscribing witness cannot be used with any power of attorney.',
+  },
+  {
+    id: 'q11',
+    category: 'Special Situations',
+    prompt: 'How many witnesses must subscribe their own names when a signer signs by mark?',
+    options: ['One', 'Two', 'Three', 'None'],
+    correctAnswer: 1,
+    explanation: 'Signature by mark requires two witnesses on the document.',
+  },
+  {
+    id: 'q12',
+    category: 'Special Situations',
+    prompt: 'Which copy may a California notary public certify?',
+    options: ['Birth certificate', 'Court order', 'Power of attorney', 'Driver license'],
+    correctAnswer: 2,
+    explanation: 'California notaries may certify copies of powers of attorney after comparing the original and copy.',
+  },
+  {
+    id: 'q13',
+    category: 'Special Situations',
+    prompt: 'A tangible copy certification of an electronic record is signed under oath by whom?',
+    options: ['The beneficiary', 'The county clerk', 'A disinterested custodian', 'The original signer only if remote'],
+    correctAnswer: 2,
+    explanation: 'The certification is made by a disinterested custodian and accompanied by a jurat.',
+  },
+  {
+    id: 'q14',
+    category: 'Special Situations',
+    prompt: 'What should a notary do if a document is incomplete on its face?',
+    options: ['Guess the missing information', 'Notarize it if the signer insists', 'Refuse to notarize it', 'Initial the blank spaces'],
+    correctAnswer: 2,
+    explanation: 'California notaries must refuse incomplete documents.',
+  },
+  {
+    id: 'q15',
+    category: 'Prohibited Conduct',
+    prompt: 'A non-attorney notary advertising in another language must post what kind of notice?',
+    options: ['A notice that notary fees are negotiable', 'A notice stating the notary is not an attorney and cannot give legal advice', 'A notice allowing oral translations of legal advice', 'No notice is required'],
+    correctAnswer: 1,
+    explanation: 'The handbook requires a prescribed notice in English and the other language stating the notary is not an attorney and cannot give legal advice.',
+  },
+  {
+    id: 'q16',
+    category: 'Prohibited Conduct',
+    prompt: 'Which Spanish term is a California notary prohibited from using for “Notary Public”?',
+    options: ['testigo', 'secretario', 'notario publico', 'licenciado'],
+    correctAnswer: 2,
+    explanation: 'The handbook specifically prohibits translating “Notary Public” as “notario publico” or “notario.”',
+  },
+  {
+    id: 'q17',
+    category: 'Fees & Administration',
+    prompt: 'What is the maximum fee for a California acknowledgment?',
+    options: ['$10', '$15', '$20', '$25'],
+    correctAnswer: 1,
+    explanation: 'The maximum fee is $15 for each signature.',
+  },
+  {
+    id: 'q18',
+    category: 'Fees & Administration',
+    prompt: 'What is the maximum fee for notarizing signatures on vote-by-mail ballot identification envelopes or other voting materials?',
+    options: ['$0', '$5', '$10', '$15'],
+    correctAnswer: 0,
+    explanation: 'The fee table lists voting materials at $0.',
+  },
+  {
+    id: 'q19',
+    category: 'Fees & Administration',
+    prompt: 'Within how many days must a notary notify the Secretary of State of a change of business or residence address?',
+    options: ['10 days', '20 days', '30 days', '45 days'],
+    correctAnswer: 2,
+    explanation: 'The handbook says address changes must be reported within 30 days.',
+  },
+  {
+    id: 'q20',
+    category: 'Commission Basics',
+    prompt: 'Where may a California notary public provide notarial services after commissioning?',
+    options: ['Only in the county where the oath was filed', 'Only in the county of residence', 'Anywhere in California', 'Only in counties approved by the Secretary of State'],
+    correctAnswer: 2,
+    explanation: 'California notaries may provide notarial services throughout the State of California.',
+  },
+];
+
+
+function toPercent(value, total) {
+  if (!total) return 0;
+  return Math.round((value / total) * 100);
+}
+
+function normalizeDateKey(dateInput = new Date()) {
+  if (typeof dateInput === 'string') {
+    return dateInput;
+  }
+
+  const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  return date.toISOString().slice(0, 10);
+}
+
+function buildSeed(dateKey) {
+  return [...dateKey].reduce((sum, character) => sum + character.charCodeAt(0), 0);
+}
+
+function rotateTake(items, count, startIndex) {
+  if (!items.length || count <= 0) return [];
+
+  const limit = Math.min(count, items.length);
+  const selected = [];
+  for (let offset = 0; offset < limit; offset += 1) {
+    selected.push(items[(startIndex + offset) % items.length]);
+  }
+  return selected;
+}
+
+export function getAnswerFeedback(question, selectedAnswer) {
+  const isCorrect = selectedAnswer === question.correctAnswer;
+  return {
+    isCorrect,
+    status: isCorrect ? 'correct' : 'incorrect',
+    label: isCorrect ? 'Correct' : 'Incorrect',
+    detail: isCorrect
+      ? `Correct — ${question.options[question.correctAnswer]}`
+      : `Incorrect — Correct answer: ${question.options[question.correctAnswer]}`,
+  };
+}
+
+export function scoreQuiz(questions, answers = {}) {
+  const categoryMap = new Map();
+  let correctCount = 0;
+  let answeredCount = 0;
+  const missedQuestionIds = [];
+
+  for (const question of questions) {
+    const category = question.category;
+    if (!categoryMap.has(category)) {
+      categoryMap.set(category, { category, total: 0, correct: 0, incorrect: 0 });
+    }
+
+    const bucket = categoryMap.get(category);
+    bucket.total += 1;
+
+    const answer = answers[question.id];
+    if (answer === undefined || answer === null) {
+      continue;
+    }
+
+    answeredCount += 1;
+
+    if (answer === question.correctAnswer) {
+      correctCount += 1;
+      bucket.correct += 1;
+    } else {
+      bucket.incorrect += 1;
+      missedQuestionIds.push(question.id);
+    }
+  }
+
+  const totalQuestions = questions.length;
+  const incorrectCount = missedQuestionIds.length;
+  const unansweredCount = totalQuestions - answeredCount;
+
+  const byCategory = [...categoryMap.values()]
+    .map((item) => ({
+      ...item,
+      percentage: toPercent(item.correct, item.total),
+    }))
+    .sort((left, right) => left.category.localeCompare(right.category));
+
+  return {
+    totalQuestions,
+    answeredCount,
+    unansweredCount,
+    correctCount,
+    incorrectCount,
+    percentage: toPercent(correctCount, totalQuestions),
+    missedQuestionIds,
+    byCategory,
+  };
+}
+
+export function buildFlashcardProgress(flashcards, completedIds = new Set()) {
+  const categoryMap = new Map();
+
+  for (const card of flashcards) {
+    const category = card.category;
+    if (!categoryMap.has(category)) {
+      categoryMap.set(category, { category, total: 0, completed: 0 });
+    }
+
+    const bucket = categoryMap.get(category);
+    bucket.total += 1;
+
+    if (completedIds.has(card.id)) {
+      bucket.completed += 1;
+    }
+  }
+
+  return [...categoryMap.values()]
+    .map((item) => ({
+      category: item.category,
+      total: item.total,
+      completed: item.completed,
+      remaining: item.total - item.completed,
+      percentage: toPercent(item.completed, item.total),
+    }))
+    .sort((left, right) => left.category.localeCompare(right.category));
+}
+
+export function generateDailyStudySet(flashcards, questions, dateInput = new Date(), config = {}) {
+  const dateKey = normalizeDateKey(dateInput);
+  const seed = buildSeed(dateKey);
+  const flashcardCount = config.flashcardCount ?? 6;
+  const questionCount = config.questionCount ?? 8;
+
+  const selectedFlashcards = rotateTake(flashcards, flashcardCount, seed % Math.max(flashcards.length, 1));
+  const selectedQuestions = rotateTake(questions, questionCount, seed % Math.max(questions.length, 1));
+
+  const categoryCounts = new Map();
+  for (const item of [...selectedFlashcards, ...selectedQuestions]) {
+    const category = item.category;
+    categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
+  }
+
+  const focusCategories = [...categoryCounts.entries()]
+    .sort((left, right) => {
+      if (right[1] !== left[1]) return right[1] - left[1];
+      return left[0].localeCompare(right[0]);
+    })
+    .map(([category]) => category);
+
+  return {
+    dateKey,
+    flashcards: selectedFlashcards,
+    flashcardIds: selectedFlashcards.map((item) => item.id),
+    questions: selectedQuestions,
+    questionIds: selectedQuestions.map((item) => item.id),
+    focusCategories,
+  };
+}
+
+export function buildTimedExamSummary(questions, answers = {}, options = {}) {
+  const allottedSeconds = Math.max(0, options.allottedSeconds ?? 0);
+  const rawElapsedSeconds = Math.max(0, options.elapsedSeconds ?? 0);
+  const elapsedSeconds = allottedSeconds ? Math.min(rawElapsedSeconds, allottedSeconds) : rawElapsedSeconds;
+  const timeRemainingSeconds = Math.max(0, allottedSeconds - elapsedSeconds);
+  const completionReason = options.completionReason ?? 'submitted';
+  const expired = completionReason === 'time-expired' || (allottedSeconds > 0 && rawElapsedSeconds >= allottedSeconds);
+
+  return {
+    mode: 'timed-exam',
+    allottedSeconds,
+    elapsedSeconds,
+    rawElapsedSeconds,
+    timeRemainingSeconds,
+    expired,
+    finishedEarly: !expired && timeRemainingSeconds > 0,
+    completionReason,
+    result: scoreQuiz(questions, answers),
+  };
+}
+
+
+
+const STORAGE_KEYS = {
+  mastered: 'ca-notary-mastered-flashcards',
+  quizHistory: 'ca-notary-quiz-history',
+};
+
+const DAILY_COUNTS = {
+  flashcards: 6,
+  questions: 8,
+};
+
+const state = {
+  activeTab: 'guide',
+  guideCategory: 'All',
+  masteredCards: loadSet(STORAGE_KEYS.mastered),
+  quizHistory: loadJson(STORAGE_KEYS.quizHistory, []),
+  dailyStudy: generateDailyStudySet(flashcards, quizQuestions, new Date(), {
+    flashcardCount: DAILY_COUNTS.flashcards,
+    questionCount: DAILY_COUNTS.questions,
+  }),
+  flashcards: {
+    scope: 'all',
+    category: 'All',
+    index: 0,
+    showingBack: false,
+  },
+  quiz: {
+    scope: 'category',
+    mode: 'practice',
+    category: 'All',
+    questionCount: '8',
+    durationSeconds: 600,
+    pool: [],
+    currentIndex: 0,
+    answers: {},
+    revealed: false,
+    active: false,
+    startedAtMs: null,
+    timerId: null,
+    timeRemainingSeconds: null,
+  },
+};
+
+const elements = {
+  officialHandbookLink: document.querySelector('#official-handbook-link'),
+  installButton: document.querySelector('#install-app'),
+  heroStats: document.querySelector('#hero-stats'),
+  sourceCard: document.querySelector('#source-card'),
+  examTips: document.querySelector('#exam-tips'),
+  dailyStudyBadgeRow: document.querySelector('#daily-study-badge-row'),
+  dailyStudyCard: document.querySelector('#daily-study-card'),
+  topicFilterChips: document.querySelector('#topic-filter-chips'),
+  topicGuideGrid: document.querySelector('#topic-guide-grid'),
+  flashcardCategory: document.querySelector('#flashcard-category'),
+  flashcardScopeAll: document.querySelector('#flashcard-scope-all'),
+  flashcardScopeDaily: document.querySelector('#flashcard-scope-daily'),
+  flashcardMeta: document.querySelector('#flashcard-meta'),
+  flashcardCard: document.querySelector('#flashcard-card'),
+  flashcardPrev: document.querySelector('#flashcard-prev'),
+  flashcardFlip: document.querySelector('#flashcard-flip'),
+  flashcardNext: document.querySelector('#flashcard-next'),
+  flashcardMastered: document.querySelector('#flashcard-mastered'),
+  flashcardReset: document.querySelector('#flashcard-reset'),
+  quizMode: document.querySelector('#quiz-mode'),
+  quizCategory: document.querySelector('#quiz-category'),
+  quizQuestionCount: document.querySelector('#quiz-question-count'),
+  quizDuration: document.querySelector('#quiz-duration'),
+  quizDurationGroup: document.querySelector('#quiz-duration-group'),
+  quizScopeCategory: document.querySelector('#quiz-scope-category'),
+  quizScopeDaily: document.querySelector('#quiz-scope-daily'),
+  quizStart: document.querySelector('#quiz-start'),
+  quizRestart: document.querySelector('#quiz-restart'),
+  quizEmpty: document.querySelector('#quiz-empty'),
+  quizStage: document.querySelector('#quiz-stage'),
+  quizProgress: document.querySelector('#quiz-progress'),
+  quizPrompt: document.querySelector('#quiz-prompt'),
+  quizOptions: document.querySelector('#quiz-options'),
+  quizExplanation: document.querySelector('#quiz-explanation'),
+  quizSubmit: document.querySelector('#quiz-submit'),
+  quizNext: document.querySelector('#quiz-next'),
+  quizResults: document.querySelector('#quiz-results'),
+  progressStats: document.querySelector('#progress-stats'),
+  flashcardProgressList: document.querySelector('#flashcard-progress-list'),
+  quizFocusList: document.querySelector('#quiz-focus-list'),
+  dailyProgressList: document.querySelector('#daily-progress-list'),
+  timedExamHistory: document.querySelector('#timed-exam-history'),
+  tabButtons: [...document.querySelectorAll('.tab-button')],
+  tabPanels: [...document.querySelectorAll('.tab-panel')],
+};
+
+let deferredInstallPrompt = null;
+
+function loadJson(key, fallback) {
+  try {
+    const value = window.localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function loadSet(key) {
+  return new Set(loadJson(key, []));
+}
+
+function saveSet(key, valueSet) {
+  window.localStorage.setItem(key, JSON.stringify([...valueSet]));
+}
+
+function saveJson(key, value) {
+  window.localStorage.setItem(key, JSON.stringify(value));
+}
+
+function uniqueCategories(items) {
+  return ['All', ...new Set(items.map((item) => item.category))];
+}
+
+function percent(value, total) {
+  return total ? Math.round((value / total) * 100) : 0;
+}
+
+function formatSeconds(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function currentFlashcardPool() {
+  if (state.flashcards.scope === 'daily') {
+    return state.dailyStudy.flashcards;
+  }
+
+  return state.flashcards.category === 'All'
+    ? flashcards
+    : flashcards.filter((card) => card.category === state.flashcards.category);
+}
+
+function buildQuestionPool() {
+  const basePool = state.quiz.scope === 'daily'
+    ? state.dailyStudy.questions
+    : state.quiz.category === 'All'
+      ? quizQuestions
+      : quizQuestions.filter((question) => question.category === state.quiz.category);
+
+  if (!basePool.length) return [];
+  if (state.quiz.scope === 'daily' || state.quiz.questionCount === 'all') return [...basePool];
+
+  const requestedCount = Number(state.quiz.questionCount);
+  const count = Math.min(requestedCount, basePool.length);
+  const offset = state.quizHistory.length % basePool.length;
+
+  return Array.from({ length: count }, (_, index) => basePool[(offset + index) % basePool.length]);
+}
+
+function setActiveTab(tabName) {
+  state.activeTab = tabName;
+  elements.tabButtons.forEach((button) => {
+    button.classList.toggle('active', button.dataset.tab === tabName);
+  });
+  elements.tabPanels.forEach((panel) => {
+    const isActive = panel.id === `tab-${tabName}`;
+    panel.hidden = !isActive;
+    panel.classList.toggle('active', isActive);
+  });
+}
+
+function setFlashcardScope(scope) {
+  state.flashcards.scope = scope;
+  state.flashcards.index = 0;
+  state.flashcards.showingBack = false;
+  renderFlashcardControls();
+  renderFlashcard();
+}
+
+function setQuizScope(scope) {
+  state.quiz.scope = scope;
+  renderQuizControls();
+}
+
+function renderHeroStats() {
+  const latestQuiz = state.quizHistory.at(-1);
+  const timedExamCount = state.quizHistory.filter((entry) => entry.mode === 'timed').length;
+  const stats = [
+    { label: 'Current handbook', value: handbookSource.edition },
+    { label: 'Today’s flashcards', value: String(state.dailyStudy.flashcards.length) },
+    { label: 'Today’s quiz', value: String(state.dailyStudy.questions.length) },
+    { label: 'Mastered cards', value: `${state.masteredCards.size}/${flashcards.length}` },
+    { label: 'Timed exams', value: String(timedExamCount) },
+    { label: 'Last quiz score', value: latestQuiz ? `${latestQuiz.result.percentage}%` : '—' },
+  ];
+
+  elements.heroStats.innerHTML = stats
+    .map(
+      (stat) => `
+        <div class="stat-pill">
+          <span class="stat-value">${stat.value}</span>
+          <span class="stat-label">${stat.label}</span>
+        </div>
+      `
+    )
+    .join('');
+}
+
+function renderSourceCard() {
+  elements.officialHandbookLink.href = handbookSource.pdfUrl;
+  elements.sourceCard.innerHTML = `
+    <div class="source-panel">
+      <p class="source-title">${handbookSource.title}</p>
+      <p class="muted">${handbookSource.currentStatus}</p>
+      <p class="muted">${handbookSource.note}</p>
+      <div class="chip-row">
+        <span class="chip static">Edition ${handbookSource.edition}</span>
+        <span class="chip static">${handbookSource.pages} pages</span>
+      </div>
+      <div class="stack-sm">
+        <a class="text-link" href="${handbookSource.officialPageUrl}" target="_blank" rel="noreferrer">Official handbook page</a>
+        <a class="text-link" href="${handbookSource.pdfUrl}" target="_blank" rel="noreferrer">Direct handbook PDF</a>
+        <a class="text-link" href="${handbookSource.workbookUrl}" target="_blank" rel="noreferrer">Sample workbook PDF</a>
+      </div>
+    </div>
+  `;
+}
+
+function renderExamTips() {
+  elements.examTips.innerHTML = examTips.map((tip) => `<li>${tip}</li>`).join('');
+}
+
+function renderDailyStudy() {
+  const masteredToday = state.dailyStudy.flashcards.filter((card) => state.masteredCards.has(card.id)).length;
+  const todayDailyQuizCount = state.quizHistory.filter(
+    (entry) => entry.dateKey === state.dailyStudy.dateKey && entry.scope === 'daily'
+  ).length;
+
+  elements.dailyStudyBadgeRow.innerHTML = `
+    <span class="chip static">${state.dailyStudy.dateKey}</span>
+    <span class="chip static">${state.dailyStudy.flashcards.length} flashcards</span>
+    <span class="chip static">${state.dailyStudy.questions.length} questions</span>
+    <span class="chip static">${masteredToday}/${state.dailyStudy.flashcards.length} mastered</span>
+    <span class="chip static">${todayDailyQuizCount} daily quizzes logged</span>
+  `;
+
+  elements.dailyStudyCard.innerHTML = `
+    <div class="grid two-up">
+      <div class="subcard">
+        <h3>Today’s focus areas</h3>
+        <div class="chip-row">
+          ${state.dailyStudy.focusCategories.map((category) => `<span class="mini-chip">${category}</span>`).join('')}
+        </div>
+        <p class="muted">Use this mini set for a fast phone study session. The set rotates by date so you keep seeing new combinations over time.</p>
+        <div class="button-row compact mobile-wrap">
+          <button class="button button-dark" type="button" data-daily-action="flashcards">Start today’s flashcards</button>
+          <button class="button button-light" type="button" data-daily-action="quiz">Start today’s mini quiz</button>
+          <button class="button button-light" type="button" data-daily-action="timed">Start timed exam</button>
+        </div>
+      </div>
+      <div class="subcard">
+        <h3>What’s in today’s set</h3>
+        <div class="stack-sm">
+          <div>
+            <p class="field-label">Flashcards</p>
+            <div class="bullet-list compact plain-list">
+              ${state.dailyStudy.flashcards.map((card) => `<div>• ${card.category}: ${card.front}</div>`).join('')}
+            </div>
+          </div>
+          <div>
+            <p class="field-label">Quiz topics</p>
+            <div class="bullet-list compact plain-list">
+              ${state.dailyStudy.questions.map((question) => `<div>• ${question.category}: ${question.prompt}</div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTopicGuide() {
+  const categories = uniqueCategories(topicSummaries);
+  elements.topicFilterChips.innerHTML = categories
+    .map(
+      (category) => `
+        <button type="button" class="chip ${state.guideCategory === category ? 'active' : ''}" data-guide-category="${category}">${category}</button>
+      `
+    )
+    .join('');
+
+  const filteredTopics = state.guideCategory === 'All'
+    ? topicSummaries
+    : topicSummaries.filter((topic) => topic.category === state.guideCategory);
+
+  elements.topicGuideGrid.innerHTML = filteredTopics
+    .map(
+      (topic) => `
+        <article class="topic-card">
+          <div class="topic-card-head">
+            <span class="mini-chip">${topic.category}</span>
+            <span class="source-ref">${topic.sourceRef}</span>
+          </div>
+          <h3>${topic.title}</h3>
+          <p class="topic-quicktake">${topic.quickTake}</p>
+          <ul class="bullet-list compact">
+            ${topic.bullets.map((bullet) => `<li>${bullet}</li>`).join('')}
+          </ul>
+        </article>
+      `
+    )
+    .join('');
+}
+
+function renderCategorySelectors() {
+  const flashcardCategories = uniqueCategories(flashcards);
+  const quizCategories = uniqueCategories(quizQuestions);
+
+  elements.flashcardCategory.innerHTML = flashcardCategories
+    .map((category) => `<option value="${category}">${category}</option>`)
+    .join('');
+  elements.flashcardCategory.value = state.flashcards.category;
+
+  elements.quizCategory.innerHTML = quizCategories
+    .map((category) => `<option value="${category}">${category}</option>`)
+    .join('');
+  elements.quizCategory.value = state.quiz.category;
+}
+
+function renderFlashcardControls() {
+  const dailyActive = state.flashcards.scope === 'daily';
+  elements.flashcardScopeAll.classList.toggle('active', !dailyActive);
+  elements.flashcardScopeDaily.classList.toggle('active', dailyActive);
+  elements.flashcardCategory.disabled = dailyActive;
+}
+
+function renderFlashcard() {
+  const pool = currentFlashcardPool();
+  if (!pool.length) {
+    elements.flashcardMeta.textContent = 'No flashcards available for this selection.';
+    elements.flashcardCard.innerHTML = '<div class="flashcard-face"><p>No flashcards found.</p></div>';
+    return;
+  }
+
+  if (state.flashcards.index >= pool.length) {
+    state.flashcards.index = 0;
+  }
+
+  const card = pool[state.flashcards.index];
+  const isMastered = state.masteredCards.has(card.id);
+  const masteredInPool = pool.filter((item) => state.masteredCards.has(item.id)).length;
+  const scopeLabel = state.flashcards.scope === 'daily' ? 'Today’s set' : 'Custom set';
+
+  elements.flashcardMeta.innerHTML = `
+    <span class="mini-chip">${scopeLabel}</span>
+    <span class="mini-chip">${card.category}</span>
+    <span>Card ${state.flashcards.index + 1} of ${pool.length}</span>
+    <span>${masteredInPool}/${pool.length} mastered</span>
+  `;
+
+  elements.flashcardCard.innerHTML = `
+    <div class="flashcard-face ${state.flashcards.showingBack ? 'back' : 'front'}">
+      <span class="face-label">${state.flashcards.showingBack ? 'Back' : 'Front'}</span>
+      <p>${state.flashcards.showingBack ? card.back : card.front}</p>
+      <span class="tap-hint">Tap the card or use Flip card</span>
+    </div>
+  `;
+
+  elements.flashcardMastered.textContent = isMastered ? 'Remove mastered' : 'Mark mastered';
+}
+
+function stopQuizTimer() {
+  if (state.quiz.timerId) {
+    window.clearInterval(state.quiz.timerId);
+    state.quiz.timerId = null;
+  }
+}
+
+function renderQuizControls() {
+  const timedMode = state.quiz.mode === 'timed';
+  const dailyScope = state.quiz.scope === 'daily';
+
+  elements.quizMode.value = state.quiz.mode;
+  elements.quizCategory.value = state.quiz.category;
+  elements.quizQuestionCount.value = state.quiz.questionCount;
+  elements.quizDuration.value = String(state.quiz.durationSeconds);
+
+  elements.quizDurationGroup.classList.toggle('hidden', !timedMode);
+  elements.quizScopeCategory.classList.toggle('active', !dailyScope);
+  elements.quizScopeDaily.classList.toggle('active', dailyScope);
+  elements.quizCategory.disabled = dailyScope;
+  elements.quizQuestionCount.disabled = dailyScope;
+}
+
+function resetQuizUi() {
+  stopQuizTimer();
+  elements.quizEmpty.classList.remove('hidden');
+  elements.quizStage.classList.add('hidden');
+  elements.quizResults.classList.add('hidden');
+  elements.quizResults.innerHTML = '';
+}
+
+function renderQuizProgress(question) {
+  const progressBits = [
+    `<span class="mini-chip">${state.quiz.mode === 'timed' ? 'Timed exam' : 'Practice mode'}</span>`,
+    `<span class="mini-chip">${state.quiz.scope === 'daily' ? 'Today’s mini quiz' : question.category}</span>`,
+    `<span>Question ${state.quiz.currentIndex + 1} of ${state.quiz.pool.length}</span>`,
+  ];
+
+  if (state.quiz.mode === 'timed') {
+    progressBits.push(`<span class="timer-chip">Time left ${formatSeconds(Math.max(0, state.quiz.timeRemainingSeconds ?? 0))}</span>`);
+  }
+
+  elements.quizProgress.innerHTML = progressBits.join('');
+}
+
+function renderQuizQuestion() {
+  const question = state.quiz.pool[state.quiz.currentIndex];
+  if (!question) {
+    finishQuiz('submitted');
+    return;
+  }
+
+  elements.quizEmpty.classList.add('hidden');
+  elements.quizStage.classList.remove('hidden');
+  elements.quizResults.classList.add('hidden');
+
+  renderQuizProgress(question);
+  elements.quizPrompt.textContent = question.prompt;
+
+  const selectedAnswer = state.quiz.answers[question.id];
+  elements.quizOptions.innerHTML = question.options
+    .map((option, index) => {
+      const isSelected = selectedAnswer === index;
+      const revealClass = state.quiz.revealed
+        ? index === question.correctAnswer
+          ? 'correct'
+          : isSelected
+            ? 'incorrect'
+            : ''
+        : '';
+
+      return `
+        <label class="option-card ${isSelected ? 'selected' : ''} ${revealClass}">
+          <input type="radio" name="quiz-option" value="${index}" ${isSelected ? 'checked' : ''} ${state.quiz.revealed ? 'disabled' : ''} />
+          <span>${option}</span>
+        </label>
+      `;
+    })
+    .join('');
+
+  const showExplanation = state.quiz.revealed;
+  const feedback = state.quiz.revealed && selectedAnswer !== undefined
+    ? getAnswerFeedback(question, selectedAnswer)
+    : null;
+
+  elements.quizExplanation.innerHTML = feedback
+    ? `
+      <div class="quiz-feedback-status ${feedback.status}">${feedback.label}</div>
+      <div>${feedback.detail}</div>
+      <div>${question.explanation}</div>
+    `
+    : question.explanation;
+  elements.quizExplanation.classList.toggle('hidden', !showExplanation);
+  elements.quizSubmit.classList.toggle('hidden', state.quiz.revealed);
+  elements.quizNext.classList.toggle('hidden', !state.quiz.revealed);
+  elements.quizNext.textContent = state.quiz.currentIndex === state.quiz.pool.length - 1 ? 'Finish quiz' : 'Next question';
+}
+
+function renderQuizResults(entry, summary) {
+  const missedItems = entry.questions.filter((question) => summary.result.missedQuestionIds.includes(question.id));
+  const timingBlock = entry.mode === 'timed'
+    ? `
+      <div class="metric-grid compact">
+        <div class="metric-card"><span class="metric-value">${formatSeconds(summary.elapsedSeconds)}</span><span class="metric-label">Time used</span></div>
+        <div class="metric-card"><span class="metric-value">${formatSeconds(summary.timeRemainingSeconds)}</span><span class="metric-label">Time left</span></div>
+        <div class="metric-card"><span class="metric-value">${summary.expired ? 'Expired' : 'Submitted'}</span><span class="metric-label">Finish type</span></div>
+      </div>
+    `
+    : '';
+
+  elements.quizResults.innerHTML = `
+    <div class="results-panel">
+      <div class="metric-grid compact">
+        <div class="metric-card"><span class="metric-value">${summary.result.percentage}%</span><span class="metric-label">Score</span></div>
+        <div class="metric-card"><span class="metric-value">${summary.result.correctCount}/${summary.result.totalQuestions}</span><span class="metric-label">Correct</span></div>
+        <div class="metric-card"><span class="metric-value">${summary.result.unansweredCount}</span><span class="metric-label">Unanswered</span></div>
+      </div>
+      ${timingBlock}
+      <div class="results-block">
+        <h3>Category breakdown</h3>
+        <div class="stack-sm">
+          ${summary.result.byCategory
+            .map(
+              (item) => `
+                <div class="result-row">
+                  <span>${item.category}</span>
+                  <span>${item.correct}/${item.total} correct • ${item.percentage}%</span>
+                </div>
+              `
+            )
+            .join('')}
+        </div>
+      </div>
+      <div class="results-block">
+        <h3>Review missed questions</h3>
+        ${missedItems.length
+          ? `<div class="stack-sm">${missedItems
+              .map(
+                (item) => `
+                  <div class="review-card">
+                    <strong>${item.prompt}</strong>
+                    <p>Correct answer: ${item.options[item.correctAnswer]}</p>
+                    <p class="muted">${item.explanation}</p>
+                  </div>
+                `
+              )
+              .join('')}</div>`
+          : '<p class="muted">Perfect round. No missed questions to review.</p>'}
+      </div>
+    </div>
+  `;
+}
+
+function finishQuiz(completionReason = 'submitted') {
+  if (!state.quiz.active && !state.quiz.pool.length) return;
+
+  stopQuizTimer();
+  const elapsedSeconds = state.quiz.startedAtMs
+    ? Math.floor((Date.now() - state.quiz.startedAtMs) / 1000)
+    : 0;
+
+  const summary = state.quiz.mode === 'timed'
+    ? buildTimedExamSummary(state.quiz.pool, state.quiz.answers, {
+        allottedSeconds: state.quiz.durationSeconds,
+        elapsedSeconds,
+        completionReason,
+      })
+    : {
+        mode: 'practice',
+        completionReason,
+        result: scoreQuiz(state.quiz.pool, state.quiz.answers),
+      };
+
+  const entry = {
+    timestamp: new Date().toISOString(),
+    dateKey: state.dailyStudy.dateKey,
+    scope: state.quiz.scope,
+    mode: state.quiz.mode,
+    category: state.quiz.scope === 'daily' ? 'Today’s mini quiz' : state.quiz.category,
+    questions: state.quiz.pool,
+    result: summary.result,
+    summary,
+  };
+
+  state.quizHistory.push(entry);
+  saveJson(STORAGE_KEYS.quizHistory, state.quizHistory);
+
+  elements.quizStage.classList.add('hidden');
+  elements.quizResults.classList.remove('hidden');
+  renderQuizResults(entry, summary);
+
+  state.quiz.active = false;
+  state.quiz.pool = [];
+  state.quiz.currentIndex = 0;
+  state.quiz.answers = {};
+  state.quiz.revealed = false;
+  state.quiz.startedAtMs = null;
+  state.quiz.timeRemainingSeconds = null;
+
+  renderHeroStats();
+  renderDailyStudy();
+  renderProgress();
+}
+
+function startQuizTimer() {
+  stopQuizTimer();
+  state.quiz.timeRemainingSeconds = state.quiz.durationSeconds;
+
+  state.quiz.timerId = window.setInterval(() => {
+    if (!state.quiz.active || state.quiz.mode !== 'timed') {
+      stopQuizTimer();
+      return;
+    }
+
+    const elapsedSeconds = Math.floor((Date.now() - state.quiz.startedAtMs) / 1000);
+    const remaining = Math.max(0, state.quiz.durationSeconds - elapsedSeconds);
+    state.quiz.timeRemainingSeconds = remaining;
+
+    const question = state.quiz.pool[state.quiz.currentIndex];
+    if (question) {
+      renderQuizProgress(question);
+    }
+
+    if (remaining <= 0) {
+      finishQuiz('time-expired');
+    }
+  }, 1000);
+}
+
+function startQuiz() {
+  const pool = buildQuestionPool();
+  if (!pool.length) {
+    window.alert('No questions are available for this selection.');
+    return;
+  }
+
+  state.quiz.pool = pool;
+  state.quiz.currentIndex = 0;
+  state.quiz.answers = {};
+  state.quiz.revealed = false;
+  state.quiz.active = true;
+  state.quiz.startedAtMs = Date.now();
+  state.quiz.timeRemainingSeconds = state.quiz.mode === 'timed' ? state.quiz.durationSeconds : null;
+
+  if (state.quiz.mode === 'timed') {
+    startQuizTimer();
+  }
+
+  renderQuizQuestion();
+}
+
+function renderProgress() {
+  const flashcardProgress = buildFlashcardProgress(flashcards, state.masteredCards);
+  const lastQuiz = state.quizHistory.at(-1);
+  const averageScore = state.quizHistory.length
+    ? Math.round(state.quizHistory.reduce((sum, item) => sum + item.result.percentage, 0) / state.quizHistory.length)
+    : 0;
+  const bestScore = state.quizHistory.length
+    ? Math.max(...state.quizHistory.map((item) => item.result.percentage))
+    : 0;
+  const timedExams = state.quizHistory.filter((entry) => entry.mode === 'timed');
+  const dailyMasteredCount = state.dailyStudy.flashcards.filter((card) => state.masteredCards.has(card.id)).length;
+  const todayDailyQuizzes = state.quizHistory.filter(
+    (entry) => entry.dateKey === state.dailyStudy.dateKey && entry.scope === 'daily'
+  );
+
+  const stats = [
+    { label: 'Mastered flashcards', value: `${state.masteredCards.size}/${flashcards.length}` },
+    { label: 'Flashcard completion', value: `${percent(state.masteredCards.size, flashcards.length)}%` },
+    { label: 'Quizzes taken', value: String(state.quizHistory.length) },
+    { label: 'Average quiz score', value: state.quizHistory.length ? `${averageScore}%` : '—' },
+    { label: 'Best quiz score', value: state.quizHistory.length ? `${bestScore}%` : '—' },
+    { label: 'Timed exams taken', value: String(timedExams.length) },
+  ];
+
+  elements.progressStats.innerHTML = stats
+    .map(
+      (stat) => `
+        <div class="metric-card">
+          <span class="metric-value">${stat.value}</span>
+          <span class="metric-label">${stat.label}</span>
+        </div>
+      `
+    )
+    .join('');
+
+  elements.flashcardProgressList.innerHTML = flashcardProgress
+    .map(
+      (item) => `
+        <div class="result-row">
+          <span>${item.category}</span>
+          <span>${item.completed}/${item.total} • ${item.percentage}%</span>
+        </div>
+      `
+    )
+    .join('');
+
+  if (!state.quizHistory.length) {
+    elements.quizFocusList.innerHTML = '<p class="muted">Take your first quiz to see weak spots.</p>';
+  } else {
+    const categoryTotals = new Map();
+    for (const entry of state.quizHistory) {
+      for (const bucket of entry.result.byCategory) {
+        if (!categoryTotals.has(bucket.category)) {
+          categoryTotals.set(bucket.category, { category: bucket.category, percentageSum: 0, count: 0 });
+        }
+        const aggregate = categoryTotals.get(bucket.category);
+        aggregate.percentageSum += bucket.percentage;
+        aggregate.count += 1;
+      }
+    }
+
+    const weakest = [...categoryTotals.values()]
+      .map((item) => ({
+        category: item.category,
+        averagePercentage: Math.round(item.percentageSum / item.count),
+      }))
+      .sort((left, right) => left.averagePercentage - right.averagePercentage)
+      .slice(0, 4);
+
+    elements.quizFocusList.innerHTML = weakest
+      .map(
+        (item) => `
+          <div class="result-row">
+            <span>${item.category}</span>
+            <span>${item.averagePercentage}% average</span>
+          </div>
+        `
+      )
+      .join('');
+  }
+
+  elements.dailyProgressList.innerHTML = `
+    <div class="result-row">
+      <span>Today’s mastered cards</span>
+      <span>${dailyMasteredCount}/${state.dailyStudy.flashcards.length}</span>
+    </div>
+    <div class="result-row">
+      <span>Today’s daily quizzes</span>
+      <span>${todayDailyQuizzes.length}</span>
+    </div>
+    <div class="result-row">
+      <span>Last quiz score</span>
+      <span>${lastQuiz ? `${lastQuiz.result.percentage}%` : '—'}</span>
+    </div>
+  `;
+
+  if (!timedExams.length) {
+    elements.timedExamHistory.innerHTML = '<p class="muted">No timed exams yet. Start one from the Quiz tab.</p>';
+  } else {
+    elements.timedExamHistory.innerHTML = timedExams
+      .slice(-4)
+      .reverse()
+      .map(
+        (entry) => `
+          <div class="result-row">
+            <span>${new Date(entry.timestamp).toLocaleDateString()}</span>
+            <span>${entry.result.percentage}% • ${formatSeconds(entry.summary.allottedSeconds)}</span>
+          </div>
+        `
+      )
+      .join('');
+  }
+}
+
+function wireEvents() {
+  elements.tabButtons.forEach((button) => {
+    button.addEventListener('click', () => setActiveTab(button.dataset.tab));
+  });
+
+  elements.topicFilterChips.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-guide-category]');
+    if (!button) return;
+    state.guideCategory = button.dataset.guideCategory;
+    renderTopicGuide();
+  });
+
+  elements.dailyStudyCard.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-daily-action]');
+    if (!button) return;
+
+    const action = button.dataset.dailyAction;
+    if (action === 'flashcards') {
+      setFlashcardScope('daily');
+      setActiveTab('flashcards');
+    } else if (action === 'quiz') {
+      state.quiz.mode = 'practice';
+      setQuizScope('daily');
+      renderQuizControls();
+      setActiveTab('quiz');
+      startQuiz();
+    } else if (action === 'timed') {
+      state.quiz.mode = 'timed';
+      setQuizScope('category');
+      renderQuizControls();
+      setActiveTab('quiz');
+    }
+  });
+
+  elements.flashcardCategory.addEventListener('change', (event) => {
+    state.flashcards.category = event.target.value;
+    state.flashcards.index = 0;
+    state.flashcards.showingBack = false;
+    renderFlashcard();
+  });
+
+  elements.flashcardScopeAll.addEventListener('click', () => setFlashcardScope('all'));
+  elements.flashcardScopeDaily.addEventListener('click', () => setFlashcardScope('daily'));
+
+  elements.flashcardCard.addEventListener('click', () => {
+    state.flashcards.showingBack = !state.flashcards.showingBack;
+    renderFlashcard();
+  });
+
+  elements.flashcardFlip.addEventListener('click', () => {
+    state.flashcards.showingBack = !state.flashcards.showingBack;
+    renderFlashcard();
+  });
+
+  elements.flashcardPrev.addEventListener('click', () => {
+    const pool = currentFlashcardPool();
+    state.flashcards.index = (state.flashcards.index - 1 + pool.length) % pool.length;
+    state.flashcards.showingBack = false;
+    renderFlashcard();
+  });
+
+  elements.flashcardNext.addEventListener('click', () => {
+    const pool = currentFlashcardPool();
+    state.flashcards.index = (state.flashcards.index + 1) % pool.length;
+    state.flashcards.showingBack = false;
+    renderFlashcard();
+  });
+
+  elements.flashcardMastered.addEventListener('click', () => {
+    const pool = currentFlashcardPool();
+    const card = pool[state.flashcards.index];
+    if (!card) return;
+
+    if (state.masteredCards.has(card.id)) {
+      state.masteredCards.delete(card.id);
+    } else {
+      state.masteredCards.add(card.id);
+    }
+
+    saveSet(STORAGE_KEYS.mastered, state.masteredCards);
+    renderFlashcard();
+    renderHeroStats();
+    renderDailyStudy();
+    renderProgress();
+  });
+
+  elements.flashcardReset.addEventListener('click', () => {
+    state.masteredCards = new Set();
+    saveSet(STORAGE_KEYS.mastered, state.masteredCards);
+    renderFlashcard();
+    renderHeroStats();
+    renderDailyStudy();
+    renderProgress();
+  });
+
+  elements.quizMode.addEventListener('change', (event) => {
+    state.quiz.mode = event.target.value;
+    renderQuizControls();
+  });
+
+  elements.quizCategory.addEventListener('change', (event) => {
+    state.quiz.category = event.target.value;
+  });
+
+  elements.quizQuestionCount.addEventListener('change', (event) => {
+    state.quiz.questionCount = event.target.value;
+  });
+
+  elements.quizDuration.addEventListener('change', (event) => {
+    state.quiz.durationSeconds = Number(event.target.value);
+  });
+
+  elements.quizScopeCategory.addEventListener('click', () => setQuizScope('category'));
+  elements.quizScopeDaily.addEventListener('click', () => setQuizScope('daily'));
+
+  elements.quizStart.addEventListener('click', () => {
+    if (state.quiz.active) {
+      finishQuiz('submitted');
+      return;
+    }
+    startQuiz();
+  });
+
+  elements.quizRestart.addEventListener('click', () => {
+    stopQuizTimer();
+    state.quiz.pool = [];
+    state.quiz.currentIndex = 0;
+    state.quiz.answers = {};
+    state.quiz.revealed = false;
+    state.quiz.active = false;
+    state.quiz.startedAtMs = null;
+    state.quiz.timeRemainingSeconds = null;
+    resetQuizUi();
+  });
+
+  elements.quizOptions.addEventListener('change', (event) => {
+    if (event.target.name !== 'quiz-option') return;
+    const question = state.quiz.pool[state.quiz.currentIndex];
+    if (!question) return;
+    state.quiz.answers[question.id] = Number(event.target.value);
+  });
+
+  elements.quizSubmit.addEventListener('click', () => {
+    const question = state.quiz.pool[state.quiz.currentIndex];
+    if (!question) return;
+    if (state.quiz.answers[question.id] === undefined) {
+      window.alert('Choose an answer before submitting.');
+      return;
+    }
+
+    state.quiz.revealed = true;
+    renderQuizQuestion();
+  });
+
+  elements.quizNext.addEventListener('click', () => {
+    state.quiz.currentIndex += 1;
+    state.quiz.revealed = false;
+    if (state.quiz.currentIndex >= state.quiz.pool.length) {
+      finishQuiz('submitted');
+      return;
+    }
+    renderQuizQuestion();
+  });
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    elements.installButton.classList.remove('hidden');
+  });
+
+  elements.installButton.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    elements.installButton.classList.add('hidden');
+  });
+}
+
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+}
+
+function init() {
+  renderHeroStats();
+  renderSourceCard();
+  renderExamTips();
+  renderDailyStudy();
+  renderCategorySelectors();
+  renderFlashcardControls();
+  renderTopicGuide();
+  renderFlashcard();
+  renderQuizControls();
+  renderProgress();
+  resetQuizUi();
+  setActiveTab(state.activeTab);
+  wireEvents();
+  registerServiceWorker();
+}
+
+init();
+
+</script>
+  </body>
+</html>
