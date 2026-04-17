@@ -6,6 +6,8 @@ import {
   generateDailyStudySet,
   buildTimedExamSummary,
   getAnswerFeedback,
+  buildExamOutcome,
+  selectMissedQuestionsForReview,
 } from '../src/lib/studyEngine.mjs';
 
 const sampleQuestions = [
@@ -161,4 +163,51 @@ test('getAnswerFeedback returns an explicit incorrect status and the correct opt
     label: 'Incorrect',
     detail: 'Incorrect — Correct answer: $15',
   });
+});
+
+test('buildExamOutcome marks a result as pass when it meets the configured target', () => {
+  const quizResult = scoreQuiz(sampleQuestions, { q1: 1, q2: 2, q3: 0 });
+  const outcome = buildExamOutcome(quizResult, { passingPercentage: 70, label: 'Mock Exam' });
+
+  assert.deepEqual(outcome, {
+    label: 'Mock Exam',
+    passingPercentage: 70,
+    passed: true,
+    status: 'pass',
+    headline: 'Pass',
+    shortfall: 0,
+    result: quizResult,
+  });
+});
+
+test('buildExamOutcome marks a result as fail and reports the shortfall when under target', () => {
+  const quizResult = scoreQuiz(sampleQuestions, { q1: 1 });
+  const outcome = buildExamOutcome(quizResult, { passingPercentage: 80, label: 'Mock Exam' });
+
+  assert.equal(outcome.passed, false);
+  assert.equal(outcome.status, 'fail');
+  assert.equal(outcome.headline, 'Needs work');
+  assert.equal(outcome.shortfall, 47);
+  assert.equal(outcome.passingPercentage, 80);
+});
+
+test('selectMissedQuestionsForReview prioritizes repeated misses, then newer misses', () => {
+  const history = [
+    {
+      timestamp: '2026-04-17T01:00:00.000Z',
+      result: { missedQuestionIds: ['q2', 'q3'] },
+    },
+    {
+      timestamp: '2026-04-17T02:00:00.000Z',
+      result: { missedQuestionIds: ['q2'] },
+    },
+    {
+      timestamp: '2026-04-17T03:00:00.000Z',
+      result: { missedQuestionIds: ['q1'] },
+    },
+  ];
+
+  const reviewSet = selectMissedQuestionsForReview(sampleQuestions, history, { limit: 2 });
+
+  assert.deepEqual(reviewSet.map((item) => item.id), ['q2', 'q1']);
 });

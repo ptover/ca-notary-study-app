@@ -35,6 +35,12 @@
         <button class="tab-button" data-tab="progress" type="button">Progress</button>
       </nav>
 
+      <section class="handbook-strip card" aria-label="Official handbook links">
+        <span class="mini-chip">Official handbook throughout the app</span>
+        <a id="handbook-strip-pdf" class="text-link" target="_blank" rel="noreferrer">Open 2025 handbook PDF</a>
+        <a id="handbook-strip-page" class="text-link" target="_blank" rel="noreferrer">Secretary of State handbook page</a>
+      </section>
+
       <main>
         <section class="tab-panel active" id="tab-guide">
           <div class="grid two-up">
@@ -126,6 +132,7 @@
                 <select id="quiz-mode">
                   <option value="practice">Practice mode</option>
                   <option value="timed">Timed exam</option>
+                  <option value="exam">Exam mode</option>
                 </select>
               </div>
               <div class="field-group">
@@ -151,11 +158,21 @@
                   <option value="1200">20 minutes</option>
                 </select>
               </div>
+              <div class="field-group hidden" id="quiz-pass-target-group">
+                <label class="field-label" for="quiz-pass-target">Pass target</label>
+                <select id="quiz-pass-target">
+                  <option value="70">70%</option>
+                  <option value="75">75%</option>
+                  <option value="80" selected>80%</option>
+                  <option value="85">85%</option>
+                </select>
+              </div>
             </div>
 
             <div class="chip-row mode-chip-row">
               <button id="quiz-scope-category" class="chip active" type="button">Selected set</button>
               <button id="quiz-scope-daily" class="chip" type="button">Today’s mini quiz</button>
+              <button id="quiz-scope-review" class="chip" type="button">Missed questions only</button>
             </div>
 
             <div class="button-row compact mobile-wrap">
@@ -164,7 +181,7 @@
             </div>
 
             <div id="quiz-empty" class="empty-state">
-              Choose practice mode or timed exam, then tap Start session.
+              Choose practice mode, timed exam, or exam mode, then tap Start session.
             </div>
 
             <div id="quiz-stage" class="hidden">

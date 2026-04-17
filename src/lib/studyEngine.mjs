@@ -153,6 +153,48 @@ export function generateDailyStudySet(flashcards, questions, dateInput = new Dat
   };
 }
 
+export function buildExamOutcome(result, options = {}) {
+  const passingPercentage = options.passingPercentage ?? 80;
+  const label = options.label ?? 'Exam';
+  const passed = result.percentage >= passingPercentage;
+  return {
+    label,
+    passingPercentage,
+    passed,
+    status: passed ? 'pass' : 'fail',
+    headline: passed ? 'Pass' : 'Needs work',
+    shortfall: passed ? 0 : Math.max(0, passingPercentage - result.percentage),
+    result,
+  };
+}
+
+export function selectMissedQuestionsForReview(allQuestions, quizHistory = [], options = {}) {
+  const limit = options.limit ?? 10;
+  const scoreMap = new Map();
+
+  for (const entry of quizHistory) {
+    const missedIds = entry?.result?.missedQuestionIds ?? [];
+    const timestamp = new Date(entry?.timestamp ?? 0).getTime() || 0;
+    for (const questionId of missedIds) {
+      const current = scoreMap.get(questionId) ?? { count: 0, lastMissedAt: 0 };
+      current.count += 1;
+      current.lastMissedAt = Math.max(current.lastMissedAt, timestamp);
+      scoreMap.set(questionId, current);
+    }
+  }
+
+  return [...allQuestions]
+    .filter((question) => scoreMap.has(question.id))
+    .sort((left, right) => {
+      const leftScore = scoreMap.get(left.id);
+      const rightScore = scoreMap.get(right.id);
+      if (rightScore.count !== leftScore.count) return rightScore.count - leftScore.count;
+      if (rightScore.lastMissedAt !== leftScore.lastMissedAt) return rightScore.lastMissedAt - leftScore.lastMissedAt;
+      return left.id.localeCompare(right.id);
+    })
+    .slice(0, limit);
+}
+
 export function buildTimedExamSummary(questions, answers = {}, options = {}) {
   const allottedSeconds = Math.max(0, options.allottedSeconds ?? 0);
   const rawElapsedSeconds = Math.max(0, options.elapsedSeconds ?? 0);

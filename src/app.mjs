@@ -5,6 +5,8 @@ import {
   generateDailyStudySet,
   buildTimedExamSummary,
   getAnswerFeedback,
+  buildExamOutcome,
+  selectMissedQuestionsForReview,
 } from './lib/studyEngine.mjs';
 
 const STORAGE_KEYS = {
@@ -38,6 +40,7 @@ const state = {
     category: 'All',
     questionCount: '8',
     durationSeconds: 600,
+    passingPercentage: 80,
     pool: [],
     currentIndex: 0,
     answers: {},
@@ -54,6 +57,8 @@ const elements = {
   installButton: document.querySelector('#install-app'),
   heroStats: document.querySelector('#hero-stats'),
   sourceCard: document.querySelector('#source-card'),
+  handbookStripPdf: document.querySelector('#handbook-strip-pdf'),
+  handbookStripPage: document.querySelector('#handbook-strip-page'),
   examTips: document.querySelector('#exam-tips'),
   dailyStudyBadgeRow: document.querySelector('#daily-study-badge-row'),
   dailyStudyCard: document.querySelector('#daily-study-card'),
@@ -74,8 +79,11 @@ const elements = {
   quizQuestionCount: document.querySelector('#quiz-question-count'),
   quizDuration: document.querySelector('#quiz-duration'),
   quizDurationGroup: document.querySelector('#quiz-duration-group'),
+  quizPassTarget: document.querySelector('#quiz-pass-target'),
+  quizPassTargetGroup: document.querySelector('#quiz-pass-target-group'),
   quizScopeCategory: document.querySelector('#quiz-scope-category'),
   quizScopeDaily: document.querySelector('#quiz-scope-daily'),
+  quizScopeReview: document.querySelector('#quiz-scope-review'),
   quizStart: document.querySelector('#quiz-start'),
   quizRestart: document.querySelector('#quiz-restart'),
   quizEmpty: document.querySelector('#quiz-empty'),
@@ -143,15 +151,24 @@ function currentFlashcardPool() {
     : flashcards.filter((card) => card.category === state.flashcards.category);
 }
 
+function reviewQuestionPool() {
+  return selectMissedQuestionsForReview(quizQuestions, state.quizHistory, { limit: 20 });
+}
+
 function buildQuestionPool() {
-  const basePool = state.quiz.scope === 'daily'
+  const examMode = state.quiz.mode === 'exam';
+  const examBasePool = examMode ? [...quizQuestions] : null;
+  const basePool = examBasePool ?? (state.quiz.scope === 'daily'
     ? state.dailyStudy.questions
-    : state.quiz.category === 'All'
-      ? quizQuestions
-      : quizQuestions.filter((question) => question.category === state.quiz.category);
+    : state.quiz.scope === 'review'
+      ? reviewQuestionPool()
+      : state.quiz.category === 'All'
+        ? quizQuestions
+        : quizQuestions.filter((question) => question.category === state.quiz.category));
 
   if (!basePool.length) return [];
-  if (state.quiz.scope === 'daily' || state.quiz.questionCount === 'all') return [...basePool];
+  if (examMode) return basePool.slice(0, 45);
+  if (state.quiz.scope !== 'category' || state.quiz.questionCount === 'all') return [...basePool];
 
   const requestedCount = Number(state.quiz.questionCount);
   const count = Math.min(requestedCount, basePool.length);
@@ -181,20 +198,22 @@ function setFlashcardScope(scope) {
 }
 
 function setQuizScope(scope) {
-  state.quiz.scope = scope;
+  state.quiz.scope = state.quiz.mode === 'exam' ? 'category' : scope;
   renderQuizControls();
 }
 
 function renderHeroStats() {
   const latestQuiz = state.quizHistory.at(-1);
   const timedExamCount = state.quizHistory.filter((entry) => entry.mode === 'timed').length;
+  const mockExamCount = state.quizHistory.filter((entry) => entry.mode === 'exam').length;
+  const reviewCount = reviewQuestionPool().length;
   const stats = [
     { label: 'Current handbook', value: handbookSource.edition },
     { label: 'Today’s flashcards', value: String(state.dailyStudy.flashcards.length) },
-    { label: 'Today’s quiz', value: String(state.dailyStudy.questions.length) },
+    { label: 'Practice exam', value: '45 items' },
     { label: 'Mastered cards', value: `${state.masteredCards.size}/${flashcards.length}` },
-    { label: 'Timed exams', value: String(timedExamCount) },
-    { label: 'Last quiz score', value: latestQuiz ? `${latestQuiz.result.percentage}%` : '—' },
+    { label: 'Mock exams', value: String(mockExamCount) },
+    { label: 'Missed review', value: String(reviewCount) },
   ];
 
   elements.heroStats.innerHTML = stats
@@ -211,6 +230,8 @@ function renderHeroStats() {
 
 function renderSourceCard() {
   elements.officialHandbookLink.href = handbookSource.pdfUrl;
+  elements.handbookStripPdf.href = handbookSource.pdfUrl;
+  elements.handbookStripPage.href = handbookSource.officialPageUrl;
   elements.sourceCard.innerHTML = `
     <div class="source-panel">
       <p class="source-title">${handbookSource.title}</p>
@@ -254,28 +275,31 @@ function renderDailyStudy() {
         <div class="chip-row">
           ${state.dailyStudy.focusCategories.map((category) => `<span class="mini-chip">${category}</span>`).join('')}
         </div>
-        <p class="muted">Use this mini set for a fast phone study session. The set rotates by date so you keep seeing new combinations over time.</p>
+        <p class="muted">Fast study flow: review today’s cards, take the daily mini quiz, then use missed-question review to lock in weak spots.</p>
         <div class="button-row compact mobile-wrap">
           <button class="button button-dark" type="button" data-daily-action="flashcards">Start today’s flashcards</button>
           <button class="button button-light" type="button" data-daily-action="quiz">Start today’s mini quiz</button>
           <button class="button button-light" type="button" data-daily-action="timed">Start timed exam</button>
+          <button class="button button-light" type="button" data-daily-action="review">Review missed questions</button>
         </div>
       </div>
       <div class="subcard">
-        <h3>What’s in today’s set</h3>
-        <div class="stack-sm">
-          <div>
-            <p class="field-label">Flashcards</p>
-            <div class="bullet-list compact plain-list">
-              ${state.dailyStudy.flashcards.map((card) => `<div>• ${card.category}: ${card.front}</div>`).join('')}
-            </div>
-          </div>
-          <div>
-            <p class="field-label">Quiz topics</p>
-            <div class="bullet-list compact plain-list">
-              ${state.dailyStudy.questions.map((question) => `<div>• ${question.category}: ${question.prompt}</div>`).join('')}
-            </div>
-          </div>
+        <h3>Today’s study plan</h3>
+        <div class="result-row">
+          <span>Official handbook</span>
+          <span>Use every session</span>
+        </div>
+        <div class="result-row">
+          <span>Daily flashcards</span>
+          <span>${state.dailyStudy.flashcards.length} cards</span>
+        </div>
+        <div class="result-row">
+          <span>Daily mini quiz</span>
+          <span>${state.dailyStudy.questions.length} questions</span>
+        </div>
+        <div class="result-row">
+          <span>Practice exam target</span>
+          <span>45 items • 1 hour</span>
         </div>
       </div>
     </div>
@@ -381,18 +405,23 @@ function stopQuizTimer() {
 
 function renderQuizControls() {
   const timedMode = state.quiz.mode === 'timed';
+  const examMode = state.quiz.mode === 'exam';
   const dailyScope = state.quiz.scope === 'daily';
+  const reviewScope = state.quiz.scope === 'review';
 
   elements.quizMode.value = state.quiz.mode;
   elements.quizCategory.value = state.quiz.category;
   elements.quizQuestionCount.value = state.quiz.questionCount;
   elements.quizDuration.value = String(state.quiz.durationSeconds);
+  elements.quizPassTarget.value = String(state.quiz.passingPercentage);
 
   elements.quizDurationGroup.classList.toggle('hidden', !timedMode);
-  elements.quizScopeCategory.classList.toggle('active', !dailyScope);
+  elements.quizPassTargetGroup.classList.toggle('hidden', !examMode);
+  elements.quizScopeCategory.classList.toggle('active', !dailyScope && !reviewScope);
   elements.quizScopeDaily.classList.toggle('active', dailyScope);
-  elements.quizCategory.disabled = dailyScope;
-  elements.quizQuestionCount.disabled = dailyScope;
+  elements.quizScopeReview.classList.toggle('active', reviewScope);
+  elements.quizCategory.disabled = dailyScope || reviewScope || examMode;
+  elements.quizQuestionCount.disabled = dailyScope || reviewScope || examMode;
 }
 
 function resetQuizUi() {
@@ -404,14 +433,29 @@ function resetQuizUi() {
 }
 
 function renderQuizProgress(question) {
+  const modeLabel = state.quiz.mode === 'timed'
+    ? 'Timed exam'
+    : state.quiz.mode === 'exam'
+      ? 'Exam mode'
+      : 'Practice mode';
+  const scopeLabel = state.quiz.scope === 'daily'
+    ? 'Today’s mini quiz'
+    : state.quiz.scope === 'review'
+      ? 'Missed questions review'
+      : question.category;
+
   const progressBits = [
-    `<span class="mini-chip">${state.quiz.mode === 'timed' ? 'Timed exam' : 'Practice mode'}</span>`,
-    `<span class="mini-chip">${state.quiz.scope === 'daily' ? 'Today’s mini quiz' : question.category}</span>`,
+    `<span class="mini-chip">${modeLabel}</span>`,
+    `<span class="mini-chip">${scopeLabel}</span>`,
     `<span>Question ${state.quiz.currentIndex + 1} of ${state.quiz.pool.length}</span>`,
   ];
 
   if (state.quiz.mode === 'timed') {
     progressBits.push(`<span class="timer-chip">Time left ${formatSeconds(Math.max(0, state.quiz.timeRemainingSeconds ?? 0))}</span>`);
+  }
+
+  if (state.quiz.mode === 'exam') {
+    progressBits.push(`<span class="timer-chip">Target ${state.quiz.passingPercentage}%</span>`);
   }
 
   elements.quizProgress.innerHTML = progressBits.join('');
@@ -452,8 +496,8 @@ function renderQuizQuestion() {
     })
     .join('');
 
-  const showExplanation = state.quiz.revealed;
-  const feedback = state.quiz.revealed && selectedAnswer !== undefined
+  const showExplanation = state.quiz.revealed && state.quiz.mode !== 'exam';
+  const feedback = state.quiz.revealed && selectedAnswer !== undefined && state.quiz.mode !== 'exam'
     ? getAnswerFeedback(question, selectedAnswer)
     : null;
 
@@ -481,6 +525,15 @@ function renderQuizResults(entry, summary) {
       </div>
     `
     : '';
+  const examBlock = entry.mode === 'exam'
+    ? `
+      <div class="exam-outcome ${summary.examOutcome.status}">
+        <div class="exam-outcome-badge">${summary.examOutcome.headline}</div>
+        <div class="exam-outcome-text">Target ${summary.examOutcome.passingPercentage}% • ${summary.result.percentage}% scored</div>
+        <div class="exam-outcome-subtext">${summary.examOutcome.passed ? 'You hit your target on this mock exam.' : `${summary.examOutcome.shortfall}% more needed to hit your target.`}</div>
+      </div>
+    `
+    : '';
 
   elements.quizResults.innerHTML = `
     <div class="results-panel">
@@ -490,6 +543,7 @@ function renderQuizResults(entry, summary) {
         <div class="metric-card"><span class="metric-value">${summary.result.unansweredCount}</span><span class="metric-label">Unanswered</span></div>
       </div>
       ${timingBlock}
+      ${examBlock}
       <div class="results-block">
         <h3>Category breakdown</h3>
         <div class="stack-sm">
@@ -533,24 +587,34 @@ function finishQuiz(completionReason = 'submitted') {
     ? Math.floor((Date.now() - state.quiz.startedAtMs) / 1000)
     : 0;
 
-  const summary = state.quiz.mode === 'timed'
+  const baseSummary = state.quiz.mode === 'timed'
     ? buildTimedExamSummary(state.quiz.pool, state.quiz.answers, {
         allottedSeconds: state.quiz.durationSeconds,
         elapsedSeconds,
         completionReason,
       })
     : {
-        mode: 'practice',
+        mode: state.quiz.mode,
         completionReason,
         result: scoreQuiz(state.quiz.pool, state.quiz.answers),
       };
+
+  const summary = state.quiz.mode === 'exam'
+    ? {
+        ...baseSummary,
+        examOutcome: buildExamOutcome(baseSummary.result, {
+          passingPercentage: state.quiz.passingPercentage,
+          label: 'Mock Exam',
+        }),
+      }
+    : baseSummary;
 
   const entry = {
     timestamp: new Date().toISOString(),
     dateKey: state.dailyStudy.dateKey,
     scope: state.quiz.scope,
     mode: state.quiz.mode,
-    category: state.quiz.scope === 'daily' ? 'Today’s mini quiz' : state.quiz.category,
+    category: state.quiz.scope === 'daily' ? 'Today’s mini quiz' : state.quiz.scope === 'review' ? 'Missed questions review' : state.quiz.category,
     questions: state.quiz.pool,
     result: summary.result,
     summary,
@@ -604,7 +668,9 @@ function startQuizTimer() {
 function startQuiz() {
   const pool = buildQuestionPool();
   if (!pool.length) {
-    window.alert('No questions are available for this selection.');
+    window.alert(state.quiz.scope === 'review'
+      ? 'No missed questions yet. Take a quiz first, then come back to review your misses.'
+      : 'No questions are available for this selection.');
     return;
   }
 
@@ -633,6 +699,8 @@ function renderProgress() {
     ? Math.max(...state.quizHistory.map((item) => item.result.percentage))
     : 0;
   const timedExams = state.quizHistory.filter((entry) => entry.mode === 'timed');
+  const mockExams = state.quizHistory.filter((entry) => entry.mode === 'exam');
+  const reviewPool = reviewQuestionPool();
   const dailyMasteredCount = state.dailyStudy.flashcards.filter((card) => state.masteredCards.has(card.id)).length;
   const todayDailyQuizzes = state.quizHistory.filter(
     (entry) => entry.dateKey === state.dailyStudy.dateKey && entry.scope === 'daily'
@@ -644,7 +712,7 @@ function renderProgress() {
     { label: 'Quizzes taken', value: String(state.quizHistory.length) },
     { label: 'Average quiz score', value: state.quizHistory.length ? `${averageScore}%` : '—' },
     { label: 'Best quiz score', value: state.quizHistory.length ? `${bestScore}%` : '—' },
-    { label: 'Timed exams taken', value: String(timedExams.length) },
+    { label: 'Missed questions queued', value: String(reviewPool.length) },
   ];
 
   elements.progressStats.innerHTML = stats
@@ -714,22 +782,22 @@ function renderProgress() {
       <span>${todayDailyQuizzes.length}</span>
     </div>
     <div class="result-row">
-      <span>Last quiz score</span>
-      <span>${lastQuiz ? `${lastQuiz.result.percentage}%` : '—'}</span>
+      <span>Missed questions ready</span>
+      <span>${reviewPool.length}</span>
     </div>
   `;
 
-  if (!timedExams.length) {
-    elements.timedExamHistory.innerHTML = '<p class="muted">No timed exams yet. Start one from the Quiz tab.</p>';
+  if (!timedExams.length && !mockExams.length) {
+    elements.timedExamHistory.innerHTML = '<p class="muted">No timed or mock exams yet. Start one from the Quiz tab.</p>';
   } else {
-    elements.timedExamHistory.innerHTML = timedExams
-      .slice(-4)
-      .reverse()
+    elements.timedExamHistory.innerHTML = [...timedExams, ...mockExams]
+      .sort((left, right) => new Date(right.timestamp) - new Date(left.timestamp))
+      .slice(0, 4)
       .map(
         (entry) => `
           <div class="result-row">
-            <span>${new Date(entry.timestamp).toLocaleDateString()}</span>
-            <span>${entry.result.percentage}% • ${formatSeconds(entry.summary.allottedSeconds)}</span>
+            <span>${new Date(entry.timestamp).toLocaleDateString()} • ${entry.mode === 'exam' ? 'Mock exam' : 'Timed exam'}</span>
+            <span>${entry.result.percentage}%${entry.summary.allottedSeconds ? ` • ${formatSeconds(entry.summary.allottedSeconds)}` : ''}</span>
           </div>
         `
       )
@@ -768,6 +836,12 @@ function wireEvents() {
       setQuizScope('category');
       renderQuizControls();
       setActiveTab('quiz');
+    } else if (action === 'review') {
+      state.quiz.mode = 'practice';
+      setQuizScope('review');
+      renderQuizControls();
+      setActiveTab('quiz');
+      startQuiz();
     }
   });
 
@@ -834,6 +908,11 @@ function wireEvents() {
 
   elements.quizMode.addEventListener('change', (event) => {
     state.quiz.mode = event.target.value;
+    if (state.quiz.mode === 'exam') {
+      state.quiz.scope = 'category';
+      state.quiz.category = 'All';
+      state.quiz.questionCount = 'all';
+    }
     renderQuizControls();
   });
 
@@ -849,8 +928,13 @@ function wireEvents() {
     state.quiz.durationSeconds = Number(event.target.value);
   });
 
+  elements.quizPassTarget.addEventListener('change', (event) => {
+    state.quiz.passingPercentage = Number(event.target.value);
+  });
+
   elements.quizScopeCategory.addEventListener('click', () => setQuizScope('category'));
   elements.quizScopeDaily.addEventListener('click', () => setQuizScope('daily'));
+  elements.quizScopeReview.addEventListener('click', () => setQuizScope('review'));
 
   elements.quizStart.addEventListener('click', () => {
     if (state.quiz.active) {

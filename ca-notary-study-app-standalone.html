@@ -161,6 +161,15 @@ ul {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.handbook-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
 .stat-pill,
 .metric-card,
 .subcard,
@@ -488,6 +497,35 @@ ul {
   color: var(--danger);
 }
 
+.exam-outcome {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+}
+
+.exam-outcome.pass {
+  background: var(--success-soft);
+}
+
+.exam-outcome.fail {
+  background: var(--danger-soft);
+}
+
+.exam-outcome-badge {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.exam-outcome-text {
+  font-weight: 700;
+}
+
+.exam-outcome-subtext {
+  color: var(--muted);
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -629,6 +667,12 @@ ul {
         <button class="tab-button" data-tab="progress" type="button">Progress</button>
       </nav>
 
+      <section class="handbook-strip card" aria-label="Official handbook links">
+        <span class="mini-chip">Official handbook throughout the app</span>
+        <a id="handbook-strip-pdf" class="text-link" target="_blank" rel="noreferrer">Open 2025 handbook PDF</a>
+        <a id="handbook-strip-page" class="text-link" target="_blank" rel="noreferrer">Secretary of State handbook page</a>
+      </section>
+
       <main>
         <section class="tab-panel active" id="tab-guide">
           <div class="grid two-up">
@@ -720,6 +764,7 @@ ul {
                 <select id="quiz-mode">
                   <option value="practice">Practice mode</option>
                   <option value="timed">Timed exam</option>
+                  <option value="exam">Exam mode</option>
                 </select>
               </div>
               <div class="field-group">
@@ -745,11 +790,21 @@ ul {
                   <option value="1200">20 minutes</option>
                 </select>
               </div>
+              <div class="field-group hidden" id="quiz-pass-target-group">
+                <label class="field-label" for="quiz-pass-target">Pass target</label>
+                <select id="quiz-pass-target">
+                  <option value="70">70%</option>
+                  <option value="75">75%</option>
+                  <option value="80" selected>80%</option>
+                  <option value="85">85%</option>
+                </select>
+              </div>
             </div>
 
             <div class="chip-row mode-chip-row">
               <button id="quiz-scope-category" class="chip active" type="button">Selected set</button>
               <button id="quiz-scope-daily" class="chip" type="button">Today’s mini quiz</button>
+              <button id="quiz-scope-review" class="chip" type="button">Missed questions only</button>
             </div>
 
             <div class="button-row compact mobile-wrap">
@@ -758,7 +813,7 @@ ul {
             </div>
 
             <div id="quiz-empty" class="empty-state">
-              Choose practice mode or timed exam, then tap Start session.
+              Choose practice mode, timed exam, or exam mode, then tap Start session.
             </div>
 
             <div id="quiz-stage" class="hidden">
@@ -829,6 +884,8 @@ export const handbookSource = {
 };
 
 export const examTips = [
+  'Official exam format note: the CPS HR California Notary Exam information page says the examination is a total of 45 items with a one hour time limit.',
+  'Keep the official 2025 handbook open while you study. The handbook links stay visible throughout the app so you can double-check rules fast.',
   'Memorize the high-frequency numbers: 18 years old, 30 calendar days to file oath and bond, $15,000 bond, $15 max fee for most core notarial acts.',
   'Separate acknowledgments from jurats: acknowledgment = signer acknowledges execution; jurat = signer appears, signs in front of notary, and takes oath/affirmation.',
   'Journal questions matter a lot. Know what goes in every entry and when a thumbprint is required.',
@@ -1182,6 +1239,206 @@ export const quizQuestions = [
     correctAnswer: 2,
     explanation: 'California notaries may provide notarial services throughout the State of California.',
   },
+  {
+    id: 'q21',
+    category: 'Commission Basics',
+    prompt: 'Which course is required if a current notary lets the commission expire before reapplying?',
+    options: ['No course', 'Three-hour refresher course', 'Six-hour course', 'One-hour ethics course'],
+    correctAnswer: 2,
+    explanation: 'If the commission has expired, the applicant must complete an approved six-hour course before receiving a new commission.',
+  },
+  {
+    id: 'q22',
+    category: 'Seal & Scope',
+    prompt: 'Which item must appear on a California notary seal?',
+    options: ['The notary’s home address', 'The county where the oath and bond were filed', 'The notary’s phone number', 'The name of the signer'],
+    correctAnswer: 1,
+    explanation: 'The seal must contain the county where the oath and bond were filed.',
+  },
+  {
+    id: 'q23',
+    category: 'Seal & Scope',
+    prompt: 'What must happen to the official seal when a commission is no longer valid?',
+    options: ['It must be mailed to the Secretary of State', 'It must be kept forever in storage', 'It must be destroyed', 'It may be given to the employer'],
+    correctAnswer: 2,
+    explanation: 'The handbook says the seal must be destroyed when the commission is no longer valid to protect against fraudulent use.',
+  },
+  {
+    id: 'q24',
+    category: 'Identification',
+    prompt: 'A California driver license used for identification must be what?',
+    options: ['Issued within 10 years', 'Current or issued within the last 5 years', 'Issued in California only and less than 1 year old', 'Signed in blue ink only'],
+    correctAnswer: 1,
+    explanation: 'The handbook allows specified IDs if they are current or were issued within 5 years.',
+  },
+  {
+    id: 'q25',
+    category: 'Identification',
+    prompt: 'Which statement about a single credible witness is true?',
+    options: ['The witness must be personally known to the signer only', 'The witness must be personally known to the notary', 'The witness can be named in the document', 'The witness does not need ID'],
+    correctAnswer: 1,
+    explanation: 'A single credible witness may be used only if that witness is personally known to the notary.',
+  },
+  {
+    id: 'q26',
+    category: 'Identification',
+    prompt: 'What is one required statement from a credible witness under oath?',
+    options: ['The signer has reviewed the document contents', 'The witness has a financial interest in the document', 'It would be very difficult or impossible for the signer to obtain another form of identification', 'The signer is related to the notary'],
+    correctAnswer: 2,
+    explanation: 'A credible witness must swear the signer would find it very difficult or impossible to obtain another form of ID.',
+  },
+  {
+    id: 'q27',
+    category: 'Journal',
+    prompt: 'Where must a California notary keep the active sequential journal?',
+    options: ['In the employer’s records room', 'In any unlocked desk for convenience', 'In a locked and secured area under the notary’s direct and exclusive control', 'At the county clerk’s office'],
+    correctAnswer: 2,
+    explanation: 'The active journal must be kept in a locked and secured area under the direct and exclusive control of the notary.',
+  },
+  {
+    id: 'q28',
+    category: 'Journal',
+    prompt: 'If a signer cannot provide a right thumbprint for a required journal entry, what should the notary do?',
+    options: ['Skip the fingerprint entirely', 'Use the left thumb or any available finger and note it in the journal', 'Take a photo instead', 'Refuse the notarization automatically'],
+    correctAnswer: 1,
+    explanation: 'If the right thumb is unavailable, the notary uses the left thumb or another available finger and indicates that in the journal.',
+  },
+  {
+    id: 'q29',
+    category: 'Journal',
+    prompt: 'How must a lost or stolen journal be reported?',
+    options: ['Only by phone', 'Immediately by certified or registered mail, or another physical delivery method providing a receipt', 'Only in the next renewal application', 'No report is required if the seal is safe'],
+    correctAnswer: 1,
+    explanation: 'The handbook requires immediate notice by trackable physical delivery if the journal is lost, stolen, destroyed, damaged, or otherwise unusable.',
+  },
+  {
+    id: 'q30',
+    category: 'Core Acts',
+    prompt: 'When must an acknowledgment certificate be fully completed?',
+    options: ['Any time within 24 hours', 'Only when the document is recorded', 'At the time the notary’s signature and seal are affixed', 'Only if requested by the signer'],
+    correctAnswer: 2,
+    explanation: 'The acknowledgment certificate must be fully completed at the time the notary signs and seals it.',
+  },
+  {
+    id: 'q31',
+    category: 'Core Acts',
+    prompt: 'Which statement about jurat wording is true?',
+    options: ['California requires one exact oath script', 'There is no prescribed oath wording, but the notary must administer an oath or affirmation', 'Jurats do not require an oath', 'A jurat may be completed without the signer present if ID is valid'],
+    correctAnswer: 1,
+    explanation: 'There is no prescribed oath wording, but the signer must personally appear, sign in the notary’s presence, and take an oath or affirmation.',
+  },
+  {
+    id: 'q32',
+    category: 'Special Situations',
+    prompt: 'Proof of execution by a subscribing witness cannot be used with which document?',
+    options: ['A school permission form', 'A routine affidavit', 'A deed of trust', 'A simple acknowledgment for a letter'],
+    correctAnswer: 2,
+    explanation: 'A proof of execution by subscribing witness cannot be used with deeds of trust and other specified real-property related documents.',
+  },
+  {
+    id: 'q33',
+    category: 'Special Situations',
+    prompt: 'How is the identity of a subscribing witness established?',
+    options: ['By the subscribing witness’s own oath only', 'By the oath of a credible witness personally known to the notary and who personally knows the subscribing witness', 'By two subscribing witnesses', 'By the signer’s employer'],
+    correctAnswer: 1,
+    explanation: 'The notary must establish the subscribing witness through a credible witness who is personally known to the notary and personally knows the subscribing witness.',
+  },
+  {
+    id: 'q34',
+    category: 'Special Situations',
+    prompt: 'When a signer uses a signature by mark, what is true about the witnesses?',
+    options: ['Only one witness is required', 'Two witnesses must sign the document', 'The notary must always identify both witnesses', 'Witnesses are never needed in the journal'],
+    correctAnswer: 1,
+    explanation: 'A signature by mark requires two witnesses to sign the document.',
+  },
+  {
+    id: 'q35',
+    category: 'Special Situations',
+    prompt: 'Which statement about certifying a copy of a power of attorney is correct?',
+    options: ['The notary may certify it without seeing the original', 'The notary may certify it only after comparing the copy with the original', 'A power of attorney may never be copied', 'Only a court clerk may certify it'],
+    correctAnswer: 1,
+    explanation: 'A California notary may certify a copy of a power of attorney after examining the original and the copy.',
+  },
+  {
+    id: 'q36',
+    category: 'Special Situations',
+    prompt: 'Who may sign a tangible copy certification for an electronic record?',
+    options: ['Any beneficiary named in the document', 'Only the county recorder', 'A disinterested custodian', 'The notary on behalf of the signer'],
+    correctAnswer: 2,
+    explanation: 'The certification is signed by a disinterested custodian under oath or affirmation and accompanied by a jurat.',
+  },
+  {
+    id: 'q37',
+    category: 'Special Situations',
+    prompt: 'What should a notary do after discovering an error in a completed notarial act?',
+    options: ['Cross it out and initial it', 'Issue a written apology only', 'Perform a new notarization with a new certificate and new journal entry', 'Use correction fluid on the certificate'],
+    correctAnswer: 2,
+    explanation: 'The handbook says there is no correction procedure for a completed notarial act; the signer must be notarized again with a new certificate and journal entry.',
+  },
+  {
+    id: 'q38',
+    category: 'Prohibited Conduct',
+    prompt: 'What can happen after a first offense of unlawful foreign-language advertising by a non-attorney notary?',
+    options: ['Nothing until a second offense', 'Automatic jail time only', 'Suspension or revocation of the commission', 'Only a warning letter'],
+    correctAnswer: 2,
+    explanation: 'The handbook states a first offense is grounds for suspension or revocation of the commission.',
+  },
+  {
+    id: 'q39',
+    category: 'Prohibited Conduct',
+    prompt: 'What is the consequence of a second offense of unlawful foreign-language advertising?',
+    options: ['Temporary suspension only', 'Permanent revocation of the notary commission', 'A reduced fee schedule', 'Mandatory retraining only'],
+    correctAnswer: 1,
+    explanation: 'A second offense is grounds for permanent revocation of the commission.',
+  },
+  {
+    id: 'q40',
+    category: 'Fees & Administration',
+    prompt: 'What is the maximum fee for administering an oath or affirmation to one person?',
+    options: ['$0', '$7', '$15', '$30'],
+    correctAnswer: 2,
+    explanation: 'The fee table lists $15 for administering an oath or affirmation to one person.',
+  },
+  {
+    id: 'q41',
+    category: 'Fees & Administration',
+    prompt: 'What is the maximum fee for executing a jurat including the seal?',
+    options: ['$7', '$10', '$15', '$30'],
+    correctAnswer: 2,
+    explanation: 'The fee table lists $15 for a jurat.',
+  },
+  {
+    id: 'q42',
+    category: 'Fees & Administration',
+    prompt: 'What is the fee for certifying a copy of a power of attorney under Probate Code section 4307?',
+    options: ['$0', '$7', '$15', '$30'],
+    correctAnswer: 2,
+    explanation: 'The fee table lists $15 for certifying a copy of a power of attorney.',
+  },
+  {
+    id: 'q43',
+    category: 'Fees & Administration',
+    prompt: 'What is the fee for a United States military veteran’s application or claim for veteran’s benefits?',
+    options: ['$0', '$7', '$15', '$30'],
+    correctAnswer: 0,
+    explanation: 'The fee table lists veteran’s benefits applications and claims at $0.',
+  },
+  {
+    id: 'q44',
+    category: 'Conflict of Interest',
+    prompt: 'When does a notary have a direct financial or beneficial interest that blocks notarization?',
+    options: ['When acting only as an employee or escrow holder', 'When named individually as a principal to a financial transaction', 'When notarizing for a friend', 'When charging the statutory fee'],
+    correctAnswer: 1,
+    explanation: 'A notary has a direct financial or beneficial interest when named individually as a principal to a financial transaction, among other listed roles in certain transactions.',
+  },
+  {
+    id: 'q45',
+    category: 'Exam Format',
+    prompt: 'According to the California Notary Exam information page from CPS HR, what is the total number of exam items and time limit?',
+    options: ['30 items in 45 minutes', '40 items in one hour', '45 items in one hour', '50 items in 90 minutes'],
+    correctAnswer: 2,
+    explanation: 'The CPS HR California Notary Exam information page says the examination is a total of 45 items with a one hour time limit.',
+  },
 ];
 
 
@@ -1340,6 +1597,48 @@ export function generateDailyStudySet(flashcards, questions, dateInput = new Dat
   };
 }
 
+export function buildExamOutcome(result, options = {}) {
+  const passingPercentage = options.passingPercentage ?? 80;
+  const label = options.label ?? 'Exam';
+  const passed = result.percentage >= passingPercentage;
+  return {
+    label,
+    passingPercentage,
+    passed,
+    status: passed ? 'pass' : 'fail',
+    headline: passed ? 'Pass' : 'Needs work',
+    shortfall: passed ? 0 : Math.max(0, passingPercentage - result.percentage),
+    result,
+  };
+}
+
+export function selectMissedQuestionsForReview(allQuestions, quizHistory = [], options = {}) {
+  const limit = options.limit ?? 10;
+  const scoreMap = new Map();
+
+  for (const entry of quizHistory) {
+    const missedIds = entry?.result?.missedQuestionIds ?? [];
+    const timestamp = new Date(entry?.timestamp ?? 0).getTime() || 0;
+    for (const questionId of missedIds) {
+      const current = scoreMap.get(questionId) ?? { count: 0, lastMissedAt: 0 };
+      current.count += 1;
+      current.lastMissedAt = Math.max(current.lastMissedAt, timestamp);
+      scoreMap.set(questionId, current);
+    }
+  }
+
+  return [...allQuestions]
+    .filter((question) => scoreMap.has(question.id))
+    .sort((left, right) => {
+      const leftScore = scoreMap.get(left.id);
+      const rightScore = scoreMap.get(right.id);
+      if (rightScore.count !== leftScore.count) return rightScore.count - leftScore.count;
+      if (rightScore.lastMissedAt !== leftScore.lastMissedAt) return rightScore.lastMissedAt - leftScore.lastMissedAt;
+      return left.id.localeCompare(right.id);
+    })
+    .slice(0, limit);
+}
+
 export function buildTimedExamSummary(questions, answers = {}, options = {}) {
   const allottedSeconds = Math.max(0, options.allottedSeconds ?? 0);
   const rawElapsedSeconds = Math.max(0, options.elapsedSeconds ?? 0);
@@ -1394,6 +1693,7 @@ const state = {
     category: 'All',
     questionCount: '8',
     durationSeconds: 600,
+    passingPercentage: 80,
     pool: [],
     currentIndex: 0,
     answers: {},
@@ -1410,6 +1710,8 @@ const elements = {
   installButton: document.querySelector('#install-app'),
   heroStats: document.querySelector('#hero-stats'),
   sourceCard: document.querySelector('#source-card'),
+  handbookStripPdf: document.querySelector('#handbook-strip-pdf'),
+  handbookStripPage: document.querySelector('#handbook-strip-page'),
   examTips: document.querySelector('#exam-tips'),
   dailyStudyBadgeRow: document.querySelector('#daily-study-badge-row'),
   dailyStudyCard: document.querySelector('#daily-study-card'),
@@ -1430,8 +1732,11 @@ const elements = {
   quizQuestionCount: document.querySelector('#quiz-question-count'),
   quizDuration: document.querySelector('#quiz-duration'),
   quizDurationGroup: document.querySelector('#quiz-duration-group'),
+  quizPassTarget: document.querySelector('#quiz-pass-target'),
+  quizPassTargetGroup: document.querySelector('#quiz-pass-target-group'),
   quizScopeCategory: document.querySelector('#quiz-scope-category'),
   quizScopeDaily: document.querySelector('#quiz-scope-daily'),
+  quizScopeReview: document.querySelector('#quiz-scope-review'),
   quizStart: document.querySelector('#quiz-start'),
   quizRestart: document.querySelector('#quiz-restart'),
   quizEmpty: document.querySelector('#quiz-empty'),
@@ -1499,15 +1804,24 @@ function currentFlashcardPool() {
     : flashcards.filter((card) => card.category === state.flashcards.category);
 }
 
+function reviewQuestionPool() {
+  return selectMissedQuestionsForReview(quizQuestions, state.quizHistory, { limit: 20 });
+}
+
 function buildQuestionPool() {
-  const basePool = state.quiz.scope === 'daily'
+  const examMode = state.quiz.mode === 'exam';
+  const examBasePool = examMode ? [...quizQuestions] : null;
+  const basePool = examBasePool ?? (state.quiz.scope === 'daily'
     ? state.dailyStudy.questions
-    : state.quiz.category === 'All'
-      ? quizQuestions
-      : quizQuestions.filter((question) => question.category === state.quiz.category);
+    : state.quiz.scope === 'review'
+      ? reviewQuestionPool()
+      : state.quiz.category === 'All'
+        ? quizQuestions
+        : quizQuestions.filter((question) => question.category === state.quiz.category));
 
   if (!basePool.length) return [];
-  if (state.quiz.scope === 'daily' || state.quiz.questionCount === 'all') return [...basePool];
+  if (examMode) return basePool.slice(0, 45);
+  if (state.quiz.scope !== 'category' || state.quiz.questionCount === 'all') return [...basePool];
 
   const requestedCount = Number(state.quiz.questionCount);
   const count = Math.min(requestedCount, basePool.length);
@@ -1537,20 +1851,22 @@ function setFlashcardScope(scope) {
 }
 
 function setQuizScope(scope) {
-  state.quiz.scope = scope;
+  state.quiz.scope = state.quiz.mode === 'exam' ? 'category' : scope;
   renderQuizControls();
 }
 
 function renderHeroStats() {
   const latestQuiz = state.quizHistory.at(-1);
   const timedExamCount = state.quizHistory.filter((entry) => entry.mode === 'timed').length;
+  const mockExamCount = state.quizHistory.filter((entry) => entry.mode === 'exam').length;
+  const reviewCount = reviewQuestionPool().length;
   const stats = [
     { label: 'Current handbook', value: handbookSource.edition },
     { label: 'Today’s flashcards', value: String(state.dailyStudy.flashcards.length) },
-    { label: 'Today’s quiz', value: String(state.dailyStudy.questions.length) },
+    { label: 'Practice exam', value: '45 items' },
     { label: 'Mastered cards', value: `${state.masteredCards.size}/${flashcards.length}` },
-    { label: 'Timed exams', value: String(timedExamCount) },
-    { label: 'Last quiz score', value: latestQuiz ? `${latestQuiz.result.percentage}%` : '—' },
+    { label: 'Mock exams', value: String(mockExamCount) },
+    { label: 'Missed review', value: String(reviewCount) },
   ];
 
   elements.heroStats.innerHTML = stats
@@ -1567,6 +1883,8 @@ function renderHeroStats() {
 
 function renderSourceCard() {
   elements.officialHandbookLink.href = handbookSource.pdfUrl;
+  elements.handbookStripPdf.href = handbookSource.pdfUrl;
+  elements.handbookStripPage.href = handbookSource.officialPageUrl;
   elements.sourceCard.innerHTML = `
     <div class="source-panel">
       <p class="source-title">${handbookSource.title}</p>
@@ -1610,28 +1928,31 @@ function renderDailyStudy() {
         <div class="chip-row">
           ${state.dailyStudy.focusCategories.map((category) => `<span class="mini-chip">${category}</span>`).join('')}
         </div>
-        <p class="muted">Use this mini set for a fast phone study session. The set rotates by date so you keep seeing new combinations over time.</p>
+        <p class="muted">Fast study flow: review today’s cards, take the daily mini quiz, then use missed-question review to lock in weak spots.</p>
         <div class="button-row compact mobile-wrap">
           <button class="button button-dark" type="button" data-daily-action="flashcards">Start today’s flashcards</button>
           <button class="button button-light" type="button" data-daily-action="quiz">Start today’s mini quiz</button>
           <button class="button button-light" type="button" data-daily-action="timed">Start timed exam</button>
+          <button class="button button-light" type="button" data-daily-action="review">Review missed questions</button>
         </div>
       </div>
       <div class="subcard">
-        <h3>What’s in today’s set</h3>
-        <div class="stack-sm">
-          <div>
-            <p class="field-label">Flashcards</p>
-            <div class="bullet-list compact plain-list">
-              ${state.dailyStudy.flashcards.map((card) => `<div>• ${card.category}: ${card.front}</div>`).join('')}
-            </div>
-          </div>
-          <div>
-            <p class="field-label">Quiz topics</p>
-            <div class="bullet-list compact plain-list">
-              ${state.dailyStudy.questions.map((question) => `<div>• ${question.category}: ${question.prompt}</div>`).join('')}
-            </div>
-          </div>
+        <h3>Today’s study plan</h3>
+        <div class="result-row">
+          <span>Official handbook</span>
+          <span>Use every session</span>
+        </div>
+        <div class="result-row">
+          <span>Daily flashcards</span>
+          <span>${state.dailyStudy.flashcards.length} cards</span>
+        </div>
+        <div class="result-row">
+          <span>Daily mini quiz</span>
+          <span>${state.dailyStudy.questions.length} questions</span>
+        </div>
+        <div class="result-row">
+          <span>Practice exam target</span>
+          <span>45 items • 1 hour</span>
         </div>
       </div>
     </div>
@@ -1737,18 +2058,23 @@ function stopQuizTimer() {
 
 function renderQuizControls() {
   const timedMode = state.quiz.mode === 'timed';
+  const examMode = state.quiz.mode === 'exam';
   const dailyScope = state.quiz.scope === 'daily';
+  const reviewScope = state.quiz.scope === 'review';
 
   elements.quizMode.value = state.quiz.mode;
   elements.quizCategory.value = state.quiz.category;
   elements.quizQuestionCount.value = state.quiz.questionCount;
   elements.quizDuration.value = String(state.quiz.durationSeconds);
+  elements.quizPassTarget.value = String(state.quiz.passingPercentage);
 
   elements.quizDurationGroup.classList.toggle('hidden', !timedMode);
-  elements.quizScopeCategory.classList.toggle('active', !dailyScope);
+  elements.quizPassTargetGroup.classList.toggle('hidden', !examMode);
+  elements.quizScopeCategory.classList.toggle('active', !dailyScope && !reviewScope);
   elements.quizScopeDaily.classList.toggle('active', dailyScope);
-  elements.quizCategory.disabled = dailyScope;
-  elements.quizQuestionCount.disabled = dailyScope;
+  elements.quizScopeReview.classList.toggle('active', reviewScope);
+  elements.quizCategory.disabled = dailyScope || reviewScope || examMode;
+  elements.quizQuestionCount.disabled = dailyScope || reviewScope || examMode;
 }
 
 function resetQuizUi() {
@@ -1760,14 +2086,29 @@ function resetQuizUi() {
 }
 
 function renderQuizProgress(question) {
+  const modeLabel = state.quiz.mode === 'timed'
+    ? 'Timed exam'
+    : state.quiz.mode === 'exam'
+      ? 'Exam mode'
+      : 'Practice mode';
+  const scopeLabel = state.quiz.scope === 'daily'
+    ? 'Today’s mini quiz'
+    : state.quiz.scope === 'review'
+      ? 'Missed questions review'
+      : question.category;
+
   const progressBits = [
-    `<span class="mini-chip">${state.quiz.mode === 'timed' ? 'Timed exam' : 'Practice mode'}</span>`,
-    `<span class="mini-chip">${state.quiz.scope === 'daily' ? 'Today’s mini quiz' : question.category}</span>`,
+    `<span class="mini-chip">${modeLabel}</span>`,
+    `<span class="mini-chip">${scopeLabel}</span>`,
     `<span>Question ${state.quiz.currentIndex + 1} of ${state.quiz.pool.length}</span>`,
   ];
 
   if (state.quiz.mode === 'timed') {
     progressBits.push(`<span class="timer-chip">Time left ${formatSeconds(Math.max(0, state.quiz.timeRemainingSeconds ?? 0))}</span>`);
+  }
+
+  if (state.quiz.mode === 'exam') {
+    progressBits.push(`<span class="timer-chip">Target ${state.quiz.passingPercentage}%</span>`);
   }
 
   elements.quizProgress.innerHTML = progressBits.join('');
@@ -1808,8 +2149,8 @@ function renderQuizQuestion() {
     })
     .join('');
 
-  const showExplanation = state.quiz.revealed;
-  const feedback = state.quiz.revealed && selectedAnswer !== undefined
+  const showExplanation = state.quiz.revealed && state.quiz.mode !== 'exam';
+  const feedback = state.quiz.revealed && selectedAnswer !== undefined && state.quiz.mode !== 'exam'
     ? getAnswerFeedback(question, selectedAnswer)
     : null;
 
@@ -1837,6 +2178,15 @@ function renderQuizResults(entry, summary) {
       </div>
     `
     : '';
+  const examBlock = entry.mode === 'exam'
+    ? `
+      <div class="exam-outcome ${summary.examOutcome.status}">
+        <div class="exam-outcome-badge">${summary.examOutcome.headline}</div>
+        <div class="exam-outcome-text">Target ${summary.examOutcome.passingPercentage}% • ${summary.result.percentage}% scored</div>
+        <div class="exam-outcome-subtext">${summary.examOutcome.passed ? 'You hit your target on this mock exam.' : `${summary.examOutcome.shortfall}% more needed to hit your target.`}</div>
+      </div>
+    `
+    : '';
 
   elements.quizResults.innerHTML = `
     <div class="results-panel">
@@ -1846,6 +2196,7 @@ function renderQuizResults(entry, summary) {
         <div class="metric-card"><span class="metric-value">${summary.result.unansweredCount}</span><span class="metric-label">Unanswered</span></div>
       </div>
       ${timingBlock}
+      ${examBlock}
       <div class="results-block">
         <h3>Category breakdown</h3>
         <div class="stack-sm">
@@ -1889,24 +2240,34 @@ function finishQuiz(completionReason = 'submitted') {
     ? Math.floor((Date.now() - state.quiz.startedAtMs) / 1000)
     : 0;
 
-  const summary = state.quiz.mode === 'timed'
+  const baseSummary = state.quiz.mode === 'timed'
     ? buildTimedExamSummary(state.quiz.pool, state.quiz.answers, {
         allottedSeconds: state.quiz.durationSeconds,
         elapsedSeconds,
         completionReason,
       })
     : {
-        mode: 'practice',
+        mode: state.quiz.mode,
         completionReason,
         result: scoreQuiz(state.quiz.pool, state.quiz.answers),
       };
+
+  const summary = state.quiz.mode === 'exam'
+    ? {
+        ...baseSummary,
+        examOutcome: buildExamOutcome(baseSummary.result, {
+          passingPercentage: state.quiz.passingPercentage,
+          label: 'Mock Exam',
+        }),
+      }
+    : baseSummary;
 
   const entry = {
     timestamp: new Date().toISOString(),
     dateKey: state.dailyStudy.dateKey,
     scope: state.quiz.scope,
     mode: state.quiz.mode,
-    category: state.quiz.scope === 'daily' ? 'Today’s mini quiz' : state.quiz.category,
+    category: state.quiz.scope === 'daily' ? 'Today’s mini quiz' : state.quiz.scope === 'review' ? 'Missed questions review' : state.quiz.category,
     questions: state.quiz.pool,
     result: summary.result,
     summary,
@@ -1960,7 +2321,9 @@ function startQuizTimer() {
 function startQuiz() {
   const pool = buildQuestionPool();
   if (!pool.length) {
-    window.alert('No questions are available for this selection.');
+    window.alert(state.quiz.scope === 'review'
+      ? 'No missed questions yet. Take a quiz first, then come back to review your misses.'
+      : 'No questions are available for this selection.');
     return;
   }
 
@@ -1989,6 +2352,8 @@ function renderProgress() {
     ? Math.max(...state.quizHistory.map((item) => item.result.percentage))
     : 0;
   const timedExams = state.quizHistory.filter((entry) => entry.mode === 'timed');
+  const mockExams = state.quizHistory.filter((entry) => entry.mode === 'exam');
+  const reviewPool = reviewQuestionPool();
   const dailyMasteredCount = state.dailyStudy.flashcards.filter((card) => state.masteredCards.has(card.id)).length;
   const todayDailyQuizzes = state.quizHistory.filter(
     (entry) => entry.dateKey === state.dailyStudy.dateKey && entry.scope === 'daily'
@@ -2000,7 +2365,7 @@ function renderProgress() {
     { label: 'Quizzes taken', value: String(state.quizHistory.length) },
     { label: 'Average quiz score', value: state.quizHistory.length ? `${averageScore}%` : '—' },
     { label: 'Best quiz score', value: state.quizHistory.length ? `${bestScore}%` : '—' },
-    { label: 'Timed exams taken', value: String(timedExams.length) },
+    { label: 'Missed questions queued', value: String(reviewPool.length) },
   ];
 
   elements.progressStats.innerHTML = stats
@@ -2070,22 +2435,22 @@ function renderProgress() {
       <span>${todayDailyQuizzes.length}</span>
     </div>
     <div class="result-row">
-      <span>Last quiz score</span>
-      <span>${lastQuiz ? `${lastQuiz.result.percentage}%` : '—'}</span>
+      <span>Missed questions ready</span>
+      <span>${reviewPool.length}</span>
     </div>
   `;
 
-  if (!timedExams.length) {
-    elements.timedExamHistory.innerHTML = '<p class="muted">No timed exams yet. Start one from the Quiz tab.</p>';
+  if (!timedExams.length && !mockExams.length) {
+    elements.timedExamHistory.innerHTML = '<p class="muted">No timed or mock exams yet. Start one from the Quiz tab.</p>';
   } else {
-    elements.timedExamHistory.innerHTML = timedExams
-      .slice(-4)
-      .reverse()
+    elements.timedExamHistory.innerHTML = [...timedExams, ...mockExams]
+      .sort((left, right) => new Date(right.timestamp) - new Date(left.timestamp))
+      .slice(0, 4)
       .map(
         (entry) => `
           <div class="result-row">
-            <span>${new Date(entry.timestamp).toLocaleDateString()}</span>
-            <span>${entry.result.percentage}% • ${formatSeconds(entry.summary.allottedSeconds)}</span>
+            <span>${new Date(entry.timestamp).toLocaleDateString()} • ${entry.mode === 'exam' ? 'Mock exam' : 'Timed exam'}</span>
+            <span>${entry.result.percentage}%${entry.summary.allottedSeconds ? ` • ${formatSeconds(entry.summary.allottedSeconds)}` : ''}</span>
           </div>
         `
       )
@@ -2124,6 +2489,12 @@ function wireEvents() {
       setQuizScope('category');
       renderQuizControls();
       setActiveTab('quiz');
+    } else if (action === 'review') {
+      state.quiz.mode = 'practice';
+      setQuizScope('review');
+      renderQuizControls();
+      setActiveTab('quiz');
+      startQuiz();
     }
   });
 
@@ -2190,6 +2561,11 @@ function wireEvents() {
 
   elements.quizMode.addEventListener('change', (event) => {
     state.quiz.mode = event.target.value;
+    if (state.quiz.mode === 'exam') {
+      state.quiz.scope = 'category';
+      state.quiz.category = 'All';
+      state.quiz.questionCount = 'all';
+    }
     renderQuizControls();
   });
 
@@ -2205,8 +2581,13 @@ function wireEvents() {
     state.quiz.durationSeconds = Number(event.target.value);
   });
 
+  elements.quizPassTarget.addEventListener('change', (event) => {
+    state.quiz.passingPercentage = Number(event.target.value);
+  });
+
   elements.quizScopeCategory.addEventListener('click', () => setQuizScope('category'));
   elements.quizScopeDaily.addEventListener('click', () => setQuizScope('daily'));
+  elements.quizScopeReview.addEventListener('click', () => setQuizScope('review'));
 
   elements.quizStart.addEventListener('click', () => {
     if (state.quiz.active) {
