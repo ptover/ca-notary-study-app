@@ -18,6 +18,7 @@ Local project files
 - Standalone single-file version: /opt/hermes/cal-notary-study-app/ca-notary-study-app-standalone.html
 - Handbook PDF: /opt/hermes/cal-notary-study-app/source/ca-notary-handbook-2025.pdf
 - Extracted text: /opt/hermes/cal-notary-study-app/source/ca-notary-handbook-2025.txt
+- Permanent hosted link: https://ptover.github.io/ca-notary-study-app/
 
 Run locally
 1. cd /opt/hermes/cal-notary-study-app
