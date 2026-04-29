@@ -8,6 +8,8 @@ import {
   getAnswerFeedback,
   buildExamOutcome,
   selectMissedQuestionsForReview,
+  buildQuizSessionRules,
+  buildStudyCoachPlan,
 } from '../src/lib/studyEngine.mjs';
 
 const sampleQuestions = [
@@ -210,4 +212,73 @@ test('selectMissedQuestionsForReview prioritizes repeated misses, then newer mis
   const reviewSet = selectMissedQuestionsForReview(sampleQuestions, history, { limit: 2 });
 
   assert.deepEqual(reviewSet.map((item) => item.id), ['q2', 'q1']);
+});
+
+test('buildQuizSessionRules makes state-style exam mode 45 questions and 1 hour', () => {
+  const rules = buildQuizSessionRules('exam');
+
+  assert.deepEqual(rules, {
+    mode: 'exam',
+    label: 'State-style mock exam',
+    questionLimit: 45,
+    allottedSeconds: 3600,
+    hidesImmediateFeedback: true,
+    hasCountdown: true,
+  });
+});
+
+test('buildQuizSessionRules preserves custom timed exam duration without changing question count', () => {
+  const rules = buildQuizSessionRules('timed', { durationSeconds: 900 });
+
+  assert.equal(rules.mode, 'timed');
+  assert.equal(rules.questionLimit, null);
+  assert.equal(rules.allottedSeconds, 900);
+  assert.equal(rules.hidesImmediateFeedback, false);
+  assert.equal(rules.hasCountdown, true);
+});
+
+test('buildStudyCoachPlan recommends missed review and weakest categories first', () => {
+  const history = [
+    {
+      timestamp: '2026-04-17T01:00:00.000Z',
+      mode: 'practice',
+      result: {
+        percentage: 40,
+        missedQuestionIds: ['q2', 'q3'],
+        byCategory: [
+          { category: 'Fees', total: 1, correct: 0, incorrect: 1, percentage: 0 },
+          { category: 'Identification', total: 2, correct: 1, incorrect: 1, percentage: 50 },
+        ],
+      },
+    },
+    {
+      timestamp: '2026-04-17T02:00:00.000Z',
+      mode: 'exam',
+      result: {
+        percentage: 62,
+        missedQuestionIds: ['q2'],
+        byCategory: [
+          { category: 'Fees', total: 1, correct: 0, incorrect: 1, percentage: 0 },
+          { category: 'Journal', total: 1, correct: 1, incorrect: 0, percentage: 100 },
+        ],
+      },
+    },
+  ];
+
+  const plan = buildStudyCoachPlan({
+    quizHistory: history,
+    flashcards: sampleFlashcards,
+    masteredCardIds: new Set(['f1', 'f2']),
+    dailyStudy: {
+      flashcards: sampleFlashcards.slice(0, 3),
+      questions: dailyQuestions.slice(0, 3),
+    },
+    missedQuestions: sampleQuestions.filter((question) => ['q2', 'q3'].includes(question.id)),
+  });
+
+  assert.equal(plan.readinessPercentage, 53);
+  assert.equal(plan.readinessLabel, 'Building');
+  assert.deepEqual(plan.weakCategories.map((item) => item.category), ['Fees', 'Identification', 'Journal']);
+  assert.equal(plan.nextActions[0].title, 'Review missed questions');
+  assert.equal(plan.nextActions[1].title, 'Finish today’s flashcards');
 });

@@ -90,7 +90,9 @@ ul {
 .flashcard,
 .quiz-question-card,
 .results-panel,
-.review-card {
+.review-card,
+.coach-readiness-card,
+.coach-action-card {
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -162,7 +164,9 @@ ul {
 .metric-card,
 .subcard,
 .topic-card,
-.review-card {
+.review-card,
+.coach-readiness-card,
+.coach-action-card {
   padding: 1rem;
 }
 
@@ -541,6 +545,65 @@ ul {
   border: 1px solid var(--line);
 }
 
+.study-coach-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f7 58%, #eef7f0 100%);
+}
+
+.study-coach-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.coach-readiness-card,
+.coach-action-card {
+  display: grid;
+  gap: 0.85rem;
+  border: 1px solid var(--line);
+}
+
+.readiness-score {
+  display: block;
+  font-size: clamp(2.5rem, 9vw, 4.5rem);
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -0.07em;
+}
+
+.readiness-meter {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.readiness-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--success), #66c77a);
+}
+
+.compact-row {
+  padding: 0.65rem 0.75rem;
+}
+
+.coach-action {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+.coach-action span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .review-card {
   display: grid;
   gap: 0.45rem;
@@ -578,6 +641,10 @@ ul {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .study-coach-grid {
+    grid-template-columns: 1.1fr 1fr 1fr;
+  }
+
   .grid-form {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -597,7 +664,9 @@ ul {
   .flashcard,
   .quiz-question-card,
   .results-panel,
-  .subcard {
+  .subcard,
+  .coach-readiness-card,
+  .coach-action-card {
     border-radius: 22px;
   }
 

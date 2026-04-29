@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#111111" />
     <meta name="description" content="Mobile-first California notary study app built from the official 2025 handbook." />
     <title>CA Notary Study App</title>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
@@ -102,7 +102,9 @@ ul {
 .flashcard,
 .quiz-question-card,
 .results-panel,
-.review-card {
+.review-card,
+.coach-readiness-card,
+.coach-action-card {
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -174,7 +176,9 @@ ul {
 .metric-card,
 .subcard,
 .topic-card,
-.review-card {
+.review-card,
+.coach-readiness-card,
+.coach-action-card {
   padding: 1rem;
 }
 
@@ -553,6 +557,65 @@ ul {
   border: 1px solid var(--line);
 }
 
+.study-coach-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f7 58%, #eef7f0 100%);
+}
+
+.study-coach-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.coach-readiness-card,
+.coach-action-card {
+  display: grid;
+  gap: 0.85rem;
+  border: 1px solid var(--line);
+}
+
+.readiness-score {
+  display: block;
+  font-size: clamp(2.5rem, 9vw, 4.5rem);
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -0.07em;
+}
+
+.readiness-meter {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.readiness-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--success), #66c77a);
+}
+
+.compact-row {
+  padding: 0.65rem 0.75rem;
+}
+
+.coach-action {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+.coach-action span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .review-card {
   display: grid;
   gap: 0.45rem;
@@ -590,6 +653,10 @@ ul {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .study-coach-grid {
+    grid-template-columns: 1.1fr 1fr 1fr;
+  }
+
   .grid-form {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -609,7 +676,9 @@ ul {
   .flashcard,
   .quiz-question-card,
   .results-panel,
-  .subcard {
+  .subcard,
+  .coach-readiness-card,
+  .coach-action-card {
     border-radius: 22px;
   }
 
@@ -643,7 +712,7 @@ ul {
   }
 }
 
-</style>
+    </style>
   </head>
   <body>
     <div class="app-shell">
@@ -695,6 +764,16 @@ ul {
               <ul id="exam-tips" class="bullet-list"></ul>
             </article>
           </div>
+
+          <article class="card section-card study-coach-section">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Personal study coach</p>
+                <h2>What to work on next</h2>
+              </div>
+            </div>
+            <div id="study-coach-card" class="study-coach-grid"></div>
+          </article>
 
           <article class="card section-card">
             <div class="section-heading">
@@ -870,9 +949,8 @@ ul {
         Built for mobile study review. For final legal accuracy, always double-check the official handbook PDF before test day.
       </footer>
     </div>
-
     <script type="module">
-export const handbookSource = {
+const handbookSource = {
   title: '2025 California Notary Public Handbook',
   currentStatus: 'Current official handbook listed by the California Secretary of State on April 17, 2026',
   officialPageUrl: 'https://www.sos.ca.gov/notary/handbook',
@@ -883,7 +961,7 @@ export const handbookSource = {
   note: 'The Secretary of State handbook page lists the 2025 PDF as the current handbook. No 2026 handbook was listed on the official page during this build.',
 };
 
-export const examTips = [
+const examTips = [
   'Official exam format note: the CPS HR California Notary Exam information page says the examination is a total of 45 items with a one hour time limit.',
   'Keep the official 2025 handbook open while you study. The handbook links stay visible throughout the app so you can double-check rules fast.',
   'Memorize the high-frequency numbers: 18 years old, 30 calendar days to file oath and bond, $15,000 bond, $15 max fee for most core notarial acts.',
@@ -894,7 +972,7 @@ export const examTips = [
   'If a document affects real property or is a power of attorney, think thumbprint and stricter handling.',
 ];
 
-export const topicSummaries = [
+const topicSummaries = [
   {
     id: 'commission-basics',
     category: 'Commission Basics',
@@ -1051,7 +1129,7 @@ export const topicSummaries = [
   },
 ];
 
-export const flashcards = [
+const flashcards = [
   { id: 'f1', category: 'Commission Basics', front: 'What are the five core requirements to become a California notary?', back: 'Be a California legal resident, be at least 18, complete an approved course, pass the written exam, and pass the background check.' },
   { id: 'f2', category: 'Commission Basics', front: 'How long does a newly commissioned notary have to file the oath and bond?', back: '30 calendar days from the beginning of the commission term.' },
   { id: 'f3', category: 'Commission Basics', front: 'What is the required California notary surety bond amount?', back: '$15,000.' },
@@ -1078,7 +1156,7 @@ export const flashcards = [
   { id: 'f24', category: 'Fees & Administration', front: 'How long does a notary have to notify the Secretary of State of an address change?', back: 'Within 30 days.' },
 ];
 
-export const quizQuestions = [
+const quizQuestions = [
   {
     id: 'q1',
     category: 'Commission Basics',
@@ -1471,7 +1549,142 @@ function rotateTake(items, count, startIndex) {
   return selected;
 }
 
-export function getAnswerFeedback(question, selectedAnswer) {
+function averagePercent(values) {
+  if (!values.length) return 0;
+  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+}
+
+function readinessLabelFor(percentage) {
+  if (percentage >= 85) return 'Exam ready';
+  if (percentage >= 70) return 'Almost ready';
+  if (percentage >= 40) return 'Building';
+  return 'Starter';
+}
+
+function buildQuizSessionRules(mode, options = {}) {
+  if (mode === 'exam') {
+    return {
+      mode,
+      label: 'State-style mock exam',
+      questionLimit: 45,
+      allottedSeconds: 3600,
+      hidesImmediateFeedback: true,
+      hasCountdown: true,
+    };
+  }
+
+  if (mode === 'timed') {
+    const allottedSeconds = Math.max(1, Number(options.durationSeconds ?? 600));
+    return {
+      mode,
+      label: 'Timed exam',
+      questionLimit: null,
+      allottedSeconds,
+      hidesImmediateFeedback: false,
+      hasCountdown: true,
+    };
+  }
+
+  return {
+    mode: 'practice',
+    label: 'Practice mode',
+    questionLimit: null,
+    allottedSeconds: 0,
+    hidesImmediateFeedback: false,
+    hasCountdown: false,
+  };
+}
+
+function buildStudyCoachPlan({
+  quizHistory = [],
+  flashcards = [],
+  masteredCardIds = new Set(),
+  dailyStudy = { flashcards: [], questions: [] },
+  missedQuestions = [],
+  passingPercentage = 80,
+} = {}) {
+  const latestQuiz = quizHistory.at(-1);
+  const latestScore = latestQuiz?.result?.percentage ?? 0;
+  const averageScore = averagePercent(quizHistory.map((entry) => entry.result?.percentage ?? 0));
+  const flashcardCompletion = toPercent(masteredCardIds.size ?? 0, flashcards.length);
+  const readinessPercentage = Math.round((latestScore * 0.4) + (averageScore * 0.4) + (flashcardCompletion * 0.2));
+
+  const categoryMap = new Map();
+  for (const entry of quizHistory) {
+    for (const bucket of entry.result?.byCategory ?? []) {
+      const current = categoryMap.get(bucket.category) ?? {
+        category: bucket.category,
+        percentageSum: 0,
+        attempts: 0,
+        missed: 0,
+      };
+      current.percentageSum += bucket.percentage;
+      current.attempts += 1;
+      current.missed += bucket.incorrect ?? 0;
+      categoryMap.set(bucket.category, current);
+    }
+  }
+
+  const weakCategories = [...categoryMap.values()]
+    .map((item) => ({
+      category: item.category,
+      averagePercentage: Math.round(item.percentageSum / item.attempts),
+      attempts: item.attempts,
+      missed: item.missed,
+    }))
+    .sort((left, right) => {
+      if (left.averagePercentage !== right.averagePercentage) return left.averagePercentage - right.averagePercentage;
+      if (right.missed !== left.missed) return right.missed - left.missed;
+      return left.category.localeCompare(right.category);
+    })
+    .slice(0, 3);
+
+  const dailyFlashcards = dailyStudy.flashcards ?? [];
+  const dailyMasteredCount = dailyFlashcards.filter((card) => masteredCardIds.has(card.id)).length;
+  const nextActions = [];
+
+  if (missedQuestions.length) {
+    nextActions.push({
+      title: 'Review missed questions',
+      detail: `${missedQuestions.length} question${missedQuestions.length === 1 ? '' : 's'} waiting from prior misses.`,
+      action: 'review',
+    });
+  }
+
+  if (dailyFlashcards.length && dailyMasteredCount < dailyFlashcards.length) {
+    nextActions.push({
+      title: 'Finish today’s flashcards',
+      detail: `${dailyFlashcards.length - dailyMasteredCount} card${dailyFlashcards.length - dailyMasteredCount === 1 ? '' : 's'} left in today’s set.`,
+      action: 'flashcards',
+    });
+  }
+
+  nextActions.push({
+    title: 'Take today’s mini quiz',
+    detail: `${dailyStudy.questions?.length ?? 0} quick questions to keep the rules fresh.`,
+    action: 'quiz',
+  });
+
+  if (!latestQuiz || latestScore < passingPercentage) {
+    nextActions.push({
+      title: 'Run a 45-question mock exam',
+      detail: `State-style practice: 45 items, 1 hour, ${passingPercentage}% target.`,
+      action: 'exam',
+    });
+  }
+
+  return {
+    readinessPercentage,
+    readinessLabel: readinessLabelFor(readinessPercentage),
+    latestScore,
+    averageScore,
+    flashcardCompletion,
+    weakCategories,
+    nextActions: nextActions.slice(0, 4),
+  };
+}
+
+function getAnswerFeedback(question, selectedAnswer) {
   const isCorrect = selectedAnswer === question.correctAnswer;
   return {
     isCorrect,
@@ -1483,7 +1696,7 @@ export function getAnswerFeedback(question, selectedAnswer) {
   };
 }
 
-export function scoreQuiz(questions, answers = {}) {
+function scoreQuiz(questions, answers = {}) {
   const categoryMap = new Map();
   let correctCount = 0;
   let answeredCount = 0;
@@ -1537,7 +1750,7 @@ export function scoreQuiz(questions, answers = {}) {
   };
 }
 
-export function buildFlashcardProgress(flashcards, completedIds = new Set()) {
+function buildFlashcardProgress(flashcards, completedIds = new Set()) {
   const categoryMap = new Map();
 
   for (const card of flashcards) {
@@ -1565,7 +1778,7 @@ export function buildFlashcardProgress(flashcards, completedIds = new Set()) {
     .sort((left, right) => left.category.localeCompare(right.category));
 }
 
-export function generateDailyStudySet(flashcards, questions, dateInput = new Date(), config = {}) {
+function generateDailyStudySet(flashcards, questions, dateInput = new Date(), config = {}) {
   const dateKey = normalizeDateKey(dateInput);
   const seed = buildSeed(dateKey);
   const flashcardCount = config.flashcardCount ?? 6;
@@ -1597,7 +1810,7 @@ export function generateDailyStudySet(flashcards, questions, dateInput = new Dat
   };
 }
 
-export function buildExamOutcome(result, options = {}) {
+function buildExamOutcome(result, options = {}) {
   const passingPercentage = options.passingPercentage ?? 80;
   const label = options.label ?? 'Exam';
   const passed = result.percentage >= passingPercentage;
@@ -1612,7 +1825,7 @@ export function buildExamOutcome(result, options = {}) {
   };
 }
 
-export function selectMissedQuestionsForReview(allQuestions, quizHistory = [], options = {}) {
+function selectMissedQuestionsForReview(allQuestions, quizHistory = [], options = {}) {
   const limit = options.limit ?? 10;
   const scoreMap = new Map();
 
@@ -1639,7 +1852,7 @@ export function selectMissedQuestionsForReview(allQuestions, quizHistory = [], o
     .slice(0, limit);
 }
 
-export function buildTimedExamSummary(questions, answers = {}, options = {}) {
+function buildTimedExamSummary(questions, answers = {}, options = {}) {
   const allottedSeconds = Math.max(0, options.allottedSeconds ?? 0);
   const rawElapsedSeconds = Math.max(0, options.elapsedSeconds ?? 0);
   const elapsedSeconds = allottedSeconds ? Math.min(rawElapsedSeconds, allottedSeconds) : rawElapsedSeconds;
@@ -1710,6 +1923,7 @@ const elements = {
   installButton: document.querySelector('#install-app'),
   heroStats: document.querySelector('#hero-stats'),
   sourceCard: document.querySelector('#source-card'),
+  studyCoachCard: document.querySelector('#study-coach-card'),
   handbookStripPdf: document.querySelector('#handbook-strip-pdf'),
   handbookStripPage: document.querySelector('#handbook-strip-page'),
   examTips: document.querySelector('#exam-tips'),
@@ -1809,6 +2023,7 @@ function reviewQuestionPool() {
 }
 
 function buildQuestionPool() {
+  const rules = buildQuizSessionRules(state.quiz.mode, { durationSeconds: state.quiz.durationSeconds });
   const examMode = state.quiz.mode === 'exam';
   const examBasePool = examMode ? [...quizQuestions] : null;
   const basePool = examBasePool ?? (state.quiz.scope === 'daily'
@@ -1820,7 +2035,7 @@ function buildQuestionPool() {
         : quizQuestions.filter((question) => question.category === state.quiz.category));
 
   if (!basePool.length) return [];
-  if (examMode) return basePool.slice(0, 45);
+  if (rules.questionLimit) return basePool.slice(0, rules.questionLimit);
   if (state.quiz.scope !== 'category' || state.quiz.questionCount === 'all') return [...basePool];
 
   const requestedCount = Number(state.quiz.questionCount);
@@ -1959,6 +2174,64 @@ function renderDailyStudy() {
   `;
 }
 
+function renderStudyCoach() {
+  const reviewPool = reviewQuestionPool();
+  const plan = buildStudyCoachPlan({
+    quizHistory: state.quizHistory,
+    flashcards,
+    masteredCardIds: state.masteredCards,
+    dailyStudy: state.dailyStudy,
+    missedQuestions: reviewPool,
+    passingPercentage: state.quiz.passingPercentage,
+  });
+
+  const weakCategoryHtml = plan.weakCategories.length
+    ? plan.weakCategories
+        .map(
+          (item) => `
+            <div class="result-row">
+              <span>${item.category}</span>
+              <span>${item.averagePercentage}% avg${item.missed ? ` • ${item.missed} missed` : ''}</span>
+            </div>
+          `
+        )
+        .join('')
+    : '<p class="muted">Take a quiz and your weakest handbook areas will show here.</p>';
+
+  elements.studyCoachCard.innerHTML = `
+    <div class="coach-readiness-card">
+      <span class="mini-chip">${plan.readinessLabel}</span>
+      <span class="readiness-score">${plan.readinessPercentage}%</span>
+      <p class="muted">Readiness blends your latest score, average score, and flashcard completion so you know what to do next.</p>
+      <div class="readiness-meter" aria-label="Exam readiness ${plan.readinessPercentage}%">
+        <span style="width: ${plan.readinessPercentage}%"></span>
+      </div>
+      <div class="result-row compact-row"><span>Latest score</span><span>${state.quizHistory.length ? `${plan.latestScore}%` : '—'}</span></div>
+      <div class="result-row compact-row"><span>Average score</span><span>${state.quizHistory.length ? `${plan.averageScore}%` : '—'}</span></div>
+      <div class="result-row compact-row"><span>Cards mastered</span><span>${plan.flashcardCompletion}%</span></div>
+    </div>
+    <div class="coach-action-card">
+      <h3>Next best moves</h3>
+      <div class="stack-sm">
+        ${plan.nextActions
+          .map(
+            (action) => `
+              <button class="coach-action" type="button" data-coach-action="${action.action}">
+                <strong>${action.title}</strong>
+                <span>${action.detail}</span>
+              </button>
+            `
+          )
+          .join('')}
+      </div>
+    </div>
+    <div class="coach-action-card">
+      <h3>Weakest areas</h3>
+      <div class="stack-sm">${weakCategoryHtml}</div>
+    </div>
+  `;
+}
+
 function renderTopicGuide() {
   const categories = uniqueCategories(topicSummaries);
   elements.topicFilterChips.innerHTML = categories
@@ -2086,11 +2359,8 @@ function resetQuizUi() {
 }
 
 function renderQuizProgress(question) {
-  const modeLabel = state.quiz.mode === 'timed'
-    ? 'Timed exam'
-    : state.quiz.mode === 'exam'
-      ? 'Exam mode'
-      : 'Practice mode';
+  const rules = buildQuizSessionRules(state.quiz.mode, { durationSeconds: state.quiz.durationSeconds });
+  const modeLabel = rules.label;
   const scopeLabel = state.quiz.scope === 'daily'
     ? 'Today’s mini quiz'
     : state.quiz.scope === 'review'
@@ -2103,7 +2373,7 @@ function renderQuizProgress(question) {
     `<span>Question ${state.quiz.currentIndex + 1} of ${state.quiz.pool.length}</span>`,
   ];
 
-  if (state.quiz.mode === 'timed') {
+  if (rules.hasCountdown) {
     progressBits.push(`<span class="timer-chip">Time left ${formatSeconds(Math.max(0, state.quiz.timeRemainingSeconds ?? 0))}</span>`);
   }
 
@@ -2129,10 +2399,11 @@ function renderQuizQuestion() {
   elements.quizPrompt.textContent = question.prompt;
 
   const selectedAnswer = state.quiz.answers[question.id];
+  const rules = buildQuizSessionRules(state.quiz.mode, { durationSeconds: state.quiz.durationSeconds });
   elements.quizOptions.innerHTML = question.options
     .map((option, index) => {
       const isSelected = selectedAnswer === index;
-      const revealClass = state.quiz.revealed
+      const revealClass = state.quiz.revealed && !rules.hidesImmediateFeedback
         ? index === question.correctAnswer
           ? 'correct'
           : isSelected
@@ -2149,8 +2420,8 @@ function renderQuizQuestion() {
     })
     .join('');
 
-  const showExplanation = state.quiz.revealed && state.quiz.mode !== 'exam';
-  const feedback = state.quiz.revealed && selectedAnswer !== undefined && state.quiz.mode !== 'exam'
+  const showExplanation = state.quiz.revealed && !rules.hidesImmediateFeedback;
+  const feedback = state.quiz.revealed && selectedAnswer !== undefined && !rules.hidesImmediateFeedback
     ? getAnswerFeedback(question, selectedAnswer)
     : null;
 
@@ -2169,7 +2440,7 @@ function renderQuizQuestion() {
 
 function renderQuizResults(entry, summary) {
   const missedItems = entry.questions.filter((question) => summary.result.missedQuestionIds.includes(question.id));
-  const timingBlock = entry.mode === 'timed'
+  const timingBlock = summary.allottedSeconds
     ? `
       <div class="metric-grid compact">
         <div class="metric-card"><span class="metric-value">${formatSeconds(summary.elapsedSeconds)}</span><span class="metric-label">Time used</span></div>
@@ -2239,10 +2510,11 @@ function finishQuiz(completionReason = 'submitted') {
   const elapsedSeconds = state.quiz.startedAtMs
     ? Math.floor((Date.now() - state.quiz.startedAtMs) / 1000)
     : 0;
+  const rules = buildQuizSessionRules(state.quiz.mode, { durationSeconds: state.quiz.durationSeconds });
 
-  const baseSummary = state.quiz.mode === 'timed'
+  const baseSummary = rules.allottedSeconds
     ? buildTimedExamSummary(state.quiz.pool, state.quiz.answers, {
-        allottedSeconds: state.quiz.durationSeconds,
+        allottedSeconds: rules.allottedSeconds,
         elapsedSeconds,
         completionReason,
       })
@@ -2290,21 +2562,24 @@ function finishQuiz(completionReason = 'submitted') {
 
   renderHeroStats();
   renderDailyStudy();
+  renderStudyCoach();
   renderProgress();
 }
 
 function startQuizTimer() {
   stopQuizTimer();
-  state.quiz.timeRemainingSeconds = state.quiz.durationSeconds;
+  const rules = buildQuizSessionRules(state.quiz.mode, { durationSeconds: state.quiz.durationSeconds });
+  state.quiz.timeRemainingSeconds = rules.allottedSeconds;
 
+  window.clearInterval(state.quiz.timerId);
   state.quiz.timerId = window.setInterval(() => {
-    if (!state.quiz.active || state.quiz.mode !== 'timed') {
+    if (!state.quiz.active || !rules.hasCountdown) {
       stopQuizTimer();
       return;
     }
 
     const elapsedSeconds = Math.floor((Date.now() - state.quiz.startedAtMs) / 1000);
-    const remaining = Math.max(0, state.quiz.durationSeconds - elapsedSeconds);
+    const remaining = Math.max(0, rules.allottedSeconds - elapsedSeconds);
     state.quiz.timeRemainingSeconds = remaining;
 
     const question = state.quiz.pool[state.quiz.currentIndex];
@@ -2320,6 +2595,7 @@ function startQuizTimer() {
 
 function startQuiz() {
   const pool = buildQuestionPool();
+  const rules = buildQuizSessionRules(state.quiz.mode, { durationSeconds: state.quiz.durationSeconds });
   if (!pool.length) {
     window.alert(state.quiz.scope === 'review'
       ? 'No missed questions yet. Take a quiz first, then come back to review your misses.'
@@ -2333,9 +2609,9 @@ function startQuiz() {
   state.quiz.revealed = false;
   state.quiz.active = true;
   state.quiz.startedAtMs = Date.now();
-  state.quiz.timeRemainingSeconds = state.quiz.mode === 'timed' ? state.quiz.durationSeconds : null;
+  state.quiz.timeRemainingSeconds = rules.hasCountdown ? rules.allottedSeconds : null;
 
-  if (state.quiz.mode === 'timed') {
+  if (rules.hasCountdown) {
     startQuizTimer();
   }
 
@@ -2458,6 +2734,38 @@ function renderProgress() {
   }
 }
 
+function runStudyAction(action) {
+  if (action === 'flashcards') {
+    setFlashcardScope('daily');
+    setActiveTab('flashcards');
+  } else if (action === 'quiz') {
+    state.quiz.mode = 'practice';
+    setQuizScope('daily');
+    renderQuizControls();
+    setActiveTab('quiz');
+    startQuiz();
+  } else if (action === 'timed') {
+    state.quiz.mode = 'timed';
+    setQuizScope('category');
+    renderQuizControls();
+    setActiveTab('quiz');
+  } else if (action === 'review') {
+    state.quiz.mode = 'practice';
+    setQuizScope('review');
+    renderQuizControls();
+    setActiveTab('quiz');
+    startQuiz();
+  } else if (action === 'exam') {
+    state.quiz.mode = 'exam';
+    state.quiz.scope = 'category';
+    state.quiz.category = 'All';
+    state.quiz.questionCount = 'all';
+    renderQuizControls();
+    setActiveTab('quiz');
+    startQuiz();
+  }
+}
+
 function wireEvents() {
   elements.tabButtons.forEach((button) => {
     button.addEventListener('click', () => setActiveTab(button.dataset.tab));
@@ -2474,28 +2782,14 @@ function wireEvents() {
     const button = event.target.closest('[data-daily-action]');
     if (!button) return;
 
-    const action = button.dataset.dailyAction;
-    if (action === 'flashcards') {
-      setFlashcardScope('daily');
-      setActiveTab('flashcards');
-    } else if (action === 'quiz') {
-      state.quiz.mode = 'practice';
-      setQuizScope('daily');
-      renderQuizControls();
-      setActiveTab('quiz');
-      startQuiz();
-    } else if (action === 'timed') {
-      state.quiz.mode = 'timed';
-      setQuizScope('category');
-      renderQuizControls();
-      setActiveTab('quiz');
-    } else if (action === 'review') {
-      state.quiz.mode = 'practice';
-      setQuizScope('review');
-      renderQuizControls();
-      setActiveTab('quiz');
-      startQuiz();
-    }
+    runStudyAction(button.dataset.dailyAction);
+  });
+
+  elements.studyCoachCard.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-coach-action]');
+    if (!button) return;
+
+    runStudyAction(button.dataset.coachAction);
   });
 
   elements.flashcardCategory.addEventListener('change', (event) => {
@@ -2547,6 +2841,7 @@ function wireEvents() {
     renderFlashcard();
     renderHeroStats();
     renderDailyStudy();
+    renderStudyCoach();
     renderProgress();
   });
 
@@ -2556,6 +2851,7 @@ function wireEvents() {
     renderFlashcard();
     renderHeroStats();
     renderDailyStudy();
+    renderStudyCoach();
     renderProgress();
   });
 
@@ -2664,6 +2960,7 @@ function init() {
   renderSourceCard();
   renderExamTips();
   renderDailyStudy();
+  renderStudyCoach();
   renderCategorySelectors();
   renderFlashcardControls();
   renderTopicGuide();
@@ -2678,6 +2975,6 @@ function init() {
 
 init();
 
-</script>
+    </script>
   </body>
 </html>
