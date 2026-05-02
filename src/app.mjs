@@ -214,7 +214,8 @@ function renderHeroStats() {
   const stats = [
     { label: 'Current handbook', value: handbookSource.edition },
     { label: 'Today’s flashcards', value: String(state.dailyStudy.flashcards.length) },
-    { label: 'Practice exam', value: '45 items' },
+    { label: 'Question bank', value: `${quizQuestions.length} items` },
+    { label: 'State-style exam', value: '45 items' },
     { label: 'Mastered cards', value: `${state.masteredCards.size}/${flashcards.length}` },
     { label: 'Mock exams', value: String(mockExamCount) },
     { label: 'Missed review', value: String(reviewCount) },

@@ -1,11 +1,11 @@
-const CACHE_NAME = 'ca-notary-study-app-v5';
+const CACHE_NAME = 'ca-notary-study-app-v6';
 const APP_ASSETS = [
   './',
   './index.html',
   './styles.css?v=training-redesign',
   './manifest.webmanifest',
   './icons/icon.svg',
-  './src/app.mjs?v=a6d6226',
+  './src/app.mjs?v=question-bank-2026',
   './src/lib/studyEngine.mjs',
   './src/data/studyData.mjs',
 ];
