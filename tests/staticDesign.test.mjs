@@ -21,7 +21,10 @@ test('home page highlights trust and access benefits above the study tools', () 
 
 test('home page has a cache-busted app script for GitHub Pages releases', () => {
   assert.match(indexSource, /src="\.\/src\/app\.mjs\?v=a6d6226"/);
-  assert.match(readFileSync(new URL('../sw.js', import.meta.url), 'utf8'), /\.\/src\/app\.mjs\?v=a6d6226/);
+  assert.match(indexSource, /href="\.\/styles\.css\?v=training-redesign"/);
+  const serviceWorkerSource = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
+  assert.match(serviceWorkerSource, /\.\/src\/app\.mjs\?v=a6d6226/);
+  assert.match(serviceWorkerSource, /\.\/styles\.css\?v=training-redesign/);
 });
 
 test('visual theme uses a friendly teal training-site palette', () => {
