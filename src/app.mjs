@@ -907,6 +907,18 @@ function wireEvents() {
     button.addEventListener('click', () => setActiveTab(button.dataset.tab));
   });
 
+  document.querySelector('[data-menu-action="sections"]')?.addEventListener('click', () => {
+    document.querySelector('.tab-bar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  document.querySelector('[data-hero-action="quiz"]')?.addEventListener('click', () => {
+    setActiveTab('quiz');
+    state.quiz.mode = 'practice';
+    setQuizScope('daily');
+    renderQuizControls();
+    startQuiz();
+  });
+
   elements.topicFilterChips.addEventListener('click', (event) => {
     const button = event.target.closest('[data-guide-category]');
     if (!button) return;

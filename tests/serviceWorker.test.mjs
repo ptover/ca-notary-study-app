@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs';
 
 const serviceWorkerSource = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
 
-test('service worker uses a new cache after the study coach release', () => {
-  assert.match(serviceWorkerSource, /ca-notary-study-app-v2/);
+test('service worker uses a new cache after the training-site redesign release', () => {
+  assert.match(serviceWorkerSource, /ca-notary-study-app-v3/);
 });
 
 test('service worker fetches navigations from the network before cached HTML', () => {

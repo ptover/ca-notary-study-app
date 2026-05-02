@@ -15,18 +15,63 @@
   </head>
   <body>
     <div class="app-shell">
-      <header class="hero card">
+      <header class="site-header card">
+        <a class="brand-lockup" href="#tab-guide" aria-label="CA Notary Prep home">
+          <span class="brand-mark" aria-hidden="true">CA</span>
+          <span>
+            <strong>CA Notary Prep</strong>
+            <small>Exam study online</small>
+          </span>
+        </a>
+        <button class="menu-button" type="button" aria-label="Jump to study sections" data-menu-action="sections">☰</button>
+      </header>
+
+      <section class="hero card">
+        <div class="hero-illustration" aria-hidden="true">
+          <svg viewBox="0 0 360 300">
+            <defs>
+              <linearGradient id="paperGlow" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#ffffff" />
+                <stop offset="1" stop-color="#dff6f3" />
+              </linearGradient>
+            </defs>
+            <circle cx="180" cy="150" r="130" fill="#e8f8f6" />
+            <rect x="94" y="58" width="150" height="190" rx="22" fill="url(#paperGlow)" stroke="#14323d" stroke-width="8" />
+            <rect x="126" y="84" width="86" height="14" rx="7" fill="#19a9a1" />
+            <rect x="122" y="120" width="96" height="10" rx="5" fill="#b7d9d7" />
+            <rect x="122" y="145" width="70" height="10" rx="5" fill="#b7d9d7" />
+            <rect x="122" y="170" width="86" height="10" rx="5" fill="#b7d9d7" />
+            <circle cx="238" cy="205" r="45" fill="#14323d" />
+            <circle cx="238" cy="205" r="31" fill="#19a9a1" />
+            <text x="238" y="201" text-anchor="middle" font-size="17" font-weight="900" fill="#ffffff">NOTARY</text>
+            <text x="238" y="221" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">PREP</text>
+            <path d="M58 226c40-36 82-35 126 0" fill="none" stroke="#14323d" stroke-width="13" stroke-linecap="round" />
+            <path d="M65 220l44-72 40 24-57 62z" fill="#19a9a1" stroke="#14323d" stroke-width="8" stroke-linejoin="round" />
+            <circle cx="138" cy="126" r="29" fill="#f1b989" stroke="#14323d" stroke-width="8" />
+            <path d="M109 119c6-28 35-42 57-19 1 24-13 34-36 31" fill="#14323d" />
+            <path d="M126 141c12 12 27 11 39 0" fill="none" stroke="#14323d" stroke-width="6" stroke-linecap="round" />
+            <path d="M264 84l26-25 20 20-25 26z" fill="#ffc857" stroke="#14323d" stroke-width="7" stroke-linejoin="round" />
+            <path d="M272 96l-44 69" stroke="#14323d" stroke-width="9" stroke-linecap="round" />
+          </svg>
+        </div>
         <div class="hero-copy">
-          <p class="eyebrow">California notary exam prep</p>
-          <h1>CA Notary Study App</h1>
-          <p class="hero-text">Built from the official California Secretary of State 2025 handbook. Use the daily study set, flip flashcards, run timed exams, and track progress from your phone.</p>
+          <p class="eyebrow">California notary training companion</p>
+          <h1>California Notary Exam Prep Online</h1>
+          <p class="hero-text">Study for the California notary exam with a friendly mobile-first guide, flashcards, daily practice, and a state-style 45-question timed mock exam.</p>
           <div class="hero-actions">
-            <a id="official-handbook-link" class="button button-dark" target="_blank" rel="noreferrer">Open official handbook</a>
+            <button class="button button-dark" type="button" data-hero-action="quiz">Start studying now</button>
+            <a id="official-handbook-link" class="button button-light" target="_blank" rel="noreferrer">Open official handbook</a>
             <button id="install-app" class="button button-light hidden" type="button">Install app</button>
+          </div>
+          <div class="trust-grid" aria-label="Study benefits">
+            <div class="trust-card"><strong>California focused</strong><span>Built from the CA handbook</span></div>
+            <div class="trust-card"><strong>24/7 study access</strong><span>Practice whenever you have time</span></div>
+            <div class="trust-card"><strong>Mobile friendly</strong><span>Made for phone review</span></div>
+            <div class="trust-card"><strong>State-style exam prep</strong><span>45 questions • 1 hour</span></div>
           </div>
         </div>
         <div class="hero-stats" id="hero-stats"></div>
-      </header>
+      </section>
 
       <nav class="tab-bar card" aria-label="Study sections">
         <button class="tab-button active" data-tab="guide" type="button">Guide</button>
