@@ -19,6 +19,11 @@ test('home page highlights trust and access benefits above the study tools', () 
   assert.match(indexSource, /State-style exam prep/);
 });
 
+test('home page has a cache-busted app script for GitHub Pages releases', () => {
+  assert.match(indexSource, /src="\.\/src\/app\.mjs\?v=a6d6226"/);
+  assert.match(readFileSync(new URL('../sw.js', import.meta.url), 'utf8'), /\.\/src\/app\.mjs\?v=a6d6226/);
+});
+
 test('visual theme uses a friendly teal training-site palette', () => {
   assert.match(stylesSource, /--teal:/);
   assert.match(stylesSource, /--navy:/);
